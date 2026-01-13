@@ -88,7 +88,9 @@ export default function AdminVideos() {
       const title = formData.get('title') as string;
       const slug = formData.get('slug') as string;
       const description = formData.get('description') as string;
-      const categoryId = formData.get('categoryId') as string;
+      let categoryId = formData.get('categoryId') as string;
+      // Convert 'none' to empty string for no category
+      if (categoryId === 'none') categoryId = '';
       const status = formData.get('status') as 'draft' | 'published' | 'archived';
       const videoFile = formData.get('video') as File;
       const thumbnailFile = formData.get('thumbnail') as File;
@@ -134,7 +136,7 @@ export default function AdminVideos() {
           title,
           slug,
           description: description || undefined,
-          categoryId: categoryId ? parseInt(categoryId) : undefined,
+          categoryId: categoryId && categoryId !== '' ? parseInt(categoryId) : undefined,
           status,
           tagIds: selectedTags.map(id => parseInt(id)),
           ...(videoUrl && { videoUrl, videoKey, duration, fileSize, mimeType }),
@@ -156,7 +158,7 @@ export default function AdminVideos() {
           duration,
           fileSize,
           mimeType,
-          categoryId: categoryId ? parseInt(categoryId) : undefined,
+          categoryId: categoryId && categoryId !== '' ? parseInt(categoryId) : undefined,
           status,
           tagIds: selectedTags.map(id => parseInt(id)),
         });
@@ -215,12 +217,12 @@ export default function AdminVideos() {
 
               <div className="space-y-2">
                 <Label htmlFor="categoryId">分类</Label>
-                <Select name="categoryId">
+                <Select name="categoryId" defaultValue="none">
                   <SelectTrigger>
                     <SelectValue placeholder="选择分类" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">无分类</SelectItem>
+                    <SelectItem value="none">无分类</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id.toString()}>
                         {cat.name}
@@ -390,12 +392,12 @@ export default function AdminVideos() {
 
               <div className="space-y-2">
                 <Label htmlFor="edit-categoryId">分类</Label>
-                <Select name="categoryId" defaultValue={editingVideo.categoryId?.toString() || ''}>
+                <Select name="categoryId" defaultValue={editingVideo.categoryId?.toString() || 'none'}>
                   <SelectTrigger>
                     <SelectValue placeholder="选择分类" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">无分类</SelectItem>
+                    <SelectItem value="none">无分类</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id.toString()}>
                         {cat.name}
