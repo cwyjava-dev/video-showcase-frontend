@@ -177,11 +177,12 @@ export default function AdminVideos() {
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={() => setIsCreateOpen(true)}>
               <Plus className="w-4 h-4" />
               上传视频
             </Button>
           </DialogTrigger>
+          {isCreateOpen && (
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>上传新视频</DialogTitle>
@@ -265,6 +266,7 @@ export default function AdminVideos() {
               </DialogFooter>
             </form>
           </DialogContent>
+          )}
         </Dialog>
       </div>
 
@@ -355,11 +357,11 @@ export default function AdminVideos() {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingVideo} onOpenChange={(open) => !open && setEditingVideo(null)}>
+        {editingVideo && (
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>编辑视频</DialogTitle>
           </DialogHeader>
-          {editingVideo && (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="edit-title">标题 *</Label>
@@ -426,8 +428,8 @@ export default function AdminVideos() {
                 </Button>
               </DialogFooter>
             </form>
-          )}
         </DialogContent>
+        )}
       </Dialog>
     </div>
   );
