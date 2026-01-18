@@ -6,6 +6,12 @@ export const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 export const getLoginUrl = () => {
   const oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
   const appId = import.meta.env.VITE_APP_ID;
+  
+  // 如果不是 OAuth 环境，返回本地登录页面
+  if (!oauthPortalUrl || !appId) {
+    return '/login';
+  }
+  
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
   const state = btoa(redirectUri);
 
