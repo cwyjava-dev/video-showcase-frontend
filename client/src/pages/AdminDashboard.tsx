@@ -1,13 +1,20 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Film, ArrowLeft } from "lucide-react";
+import { Film, ArrowLeft, Video, FolderOpen, Tag, Users } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { apiService } from "@/lib/api";
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const [stats, setStats] = useState({
+    videoCount: 0,
+    userCount: 0,
+    categoryCount: 0,
+    tagCount: 0,
+  });
 
   useEffect(() => {
     // 等待 auth 初始化完成后再检查权限
@@ -15,6 +22,30 @@ export default function AdminDashboard() {
       setLocation("/");
     }
   }, [isLoading, isAuthenticated, user, setLocation]);
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      fetchStats();
+    }
+  }, [isLoading, isAuthenticated]);
+
+  const fetchStats = async () => {
+    try {
+      const [videos, categories, tags] = await Promise.all([
+        apiService.getVideos({ page: 1, size: 1 }),
+        apiService.getCategories(),
+        apiService.getTags(),
+      ]);
+      setStats({
+        videoCount: videos?.totalElements || 0,
+        userCount: 1, // 暂时设为 1，后端需要提供用户统计 API
+        categoryCount: categories?.length || 0,
+        tagCount: tags?.length || 0,
+      });
+    } catch (error) {
+      console.error('获取统计数据失败:', error);
+    }
+  };
 
   // 初始化中或权限不足，显示加载状态或返回 null
   if (isLoading) {
@@ -58,20 +89,20 @@ export default function AdminDashboard() {
       {/* Content */}
       <div className="container py-12">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* 视频管理 */}
             <Card className="border-border/50 hover:shadow-elegant-lg transition-elegant">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Film className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <Film className="w-6 h-6" />
                   视频管理
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-6 text-base">
                   管理视频内容、上传新视频、编辑视频信息
                 </p>
-                <Button asChild className="w-full">
+                <Button asChild className="w-full h-10 text-base">
                   <Link href="/admin/videos">进入视频管理</Link>
                 </Button>
               </CardContent>
@@ -80,15 +111,16 @@ export default function AdminDashboard() {
             {/* 分类管理 */}
             <Card className="border-border/50 hover:shadow-elegant-lg transition-elegant">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  📁 分类管理
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <FolderOpen className="w-6 h-6" />
+                  分类管理
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-6 text-base">
                   创建和管理视频分类，组织内容结构
                 </p>
-                <Button asChild className="w-full" variant="outline">
+                <Button asChild className="w-full h-10 text-base" variant="outline">
                   <Link href="/admin/categories">进入分类管理</Link>
                 </Button>
               </CardContent>
@@ -97,15 +129,16 @@ export default function AdminDashboard() {
             {/* 标签管理 */}
             <Card className="border-border/50 hover:shadow-elegant-lg transition-elegant">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  🏷️ 标签管理
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <Tag className="w-6 h-6" />
+                  标签管理
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-6 text-base">
                   创建和管理视频标签，方便内容分类
                 </p>
-                <Button asChild className="w-full" variant="outline">
+                <Button asChild className="w-full h-10 text-base" variant="outline">
                   <Link href="/admin/tags">进入标签管理</Link>
                 </Button>
               </CardContent>
@@ -114,15 +147,16 @@ export default function AdminDashboard() {
             {/* 用户管理 */}
             <Card className="border-border/50 hover:shadow-elegant-lg transition-elegant">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  👥 用户管理
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <Users className="w-6 h-6" />
+                  用户管理
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-6 text-base">
                   管理平台用户、权限和账户信息
                 </p>
-                <Button asChild className="w-full" variant="outline">
+                <Button asChild className="w-full h-10 text-base" variant="outline">
                   <Link href="/admin/users">进入用户管理</Link>
                 </Button>
               </CardContent>
@@ -132,25 +166,37 @@ export default function AdminDashboard() {
           {/* 快速统计 */}
           <Card className="mt-8 border-border/50">
             <CardHeader>
-              <CardTitle>平台统计</CardTitle>
+              <CardTitle className="text-xl">平台统计</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">-</div>
-                  <p className="text-sm text-muted-foreground mt-2">总视频数</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <div className="flex justify-center mb-3">
+                    <Video className="w-8 h-8 text-blue-500" />
+                  </div>
+                  <div className="text-4xl font-bold text-primary">{stats.videoCount}</div>
+                  <p className="text-base text-muted-foreground mt-3">总视频数</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">-</div>
-                  <p className="text-sm text-muted-foreground mt-2">总用户数</p>
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <div className="flex justify-center mb-3">
+                    <Users className="w-8 h-8 text-green-500" />
+                  </div>
+                  <div className="text-4xl font-bold text-primary">{stats.userCount}</div>
+                  <p className="text-base text-muted-foreground mt-3">总用户数</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">-</div>
-                  <p className="text-sm text-muted-foreground mt-2">总分类数</p>
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <div className="flex justify-center mb-3">
+                    <FolderOpen className="w-8 h-8 text-orange-500" />
+                  </div>
+                  <div className="text-4xl font-bold text-primary">{stats.categoryCount}</div>
+                  <p className="text-base text-muted-foreground mt-3">总分类数</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">-</div>
-                  <p className="text-sm text-muted-foreground mt-2">总标签数</p>
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <div className="flex justify-center mb-3">
+                    <Tag className="w-8 h-8 text-purple-500" />
+                  </div>
+                  <div className="text-4xl font-bold text-primary">{stats.tagCount}</div>
+                  <p className="text-base text-muted-foreground mt-3">总标签数</p>
                 </div>
               </div>
             </CardContent>
