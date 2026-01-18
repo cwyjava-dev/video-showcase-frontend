@@ -193,8 +193,8 @@ export default function AdminVideos() {
         </div>
       </header>
 
-      <div className="container py-8">
-        <Card className="border-border/50">
+      <div className="container py-8 px-4 lg:px-8">
+        <Card className="border-border/50 w-full">
           <CardHeader>
             <CardTitle>视频列表</CardTitle>
           </CardHeader>

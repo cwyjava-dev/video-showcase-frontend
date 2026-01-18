@@ -169,8 +169,8 @@ export default function AdminCategories() {
         </div>
       </header>
 
-      <div className="container py-8">
-        <Card className="border-border/50">
+      <div className="container py-8 px-4 lg:px-8">
+        <Card className="border-border/50 w-full">
           <CardHeader>
             <CardTitle>分类列表</CardTitle>
           </CardHeader>

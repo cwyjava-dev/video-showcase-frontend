@@ -87,8 +87,8 @@ export default function AdminDashboard() {
       </header>
 
       {/* Content */}
-      <div className="container py-12">
-        <div className="max-w-4xl mx-auto">
+      <div className="container py-12 px-4 lg:px-8">
+        <div className="w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* 视频管理 */}
             <Card className="border-border/50 hover:shadow-elegant-lg transition-elegant">
