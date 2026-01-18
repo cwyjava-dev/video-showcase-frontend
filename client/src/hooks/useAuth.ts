@@ -73,13 +73,23 @@ export function useAuth() {
 
     try {
       const response = await apiService.login(username, password);
-      setState({
-        user: response.user,
-        token: response.token,
-        isLoading: false,
-        error: null,
-      });
-      return response;
+      if (response.success && response.data) {
+        setState({
+          user: response.data.user,
+          token: response.data.token,
+          isLoading: false,
+          error: null,
+        });
+        return response;
+      } else {
+        const message = response.message || '登录失败';
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: message,
+        }));
+        throw new Error(message);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : '登录失败';
       setState((prev) => ({

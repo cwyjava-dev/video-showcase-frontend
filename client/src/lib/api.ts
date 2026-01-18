@@ -68,14 +68,24 @@ class ApiService {
    * 用户登录
    */
   async login(username: string, password: string) {
-    const response = await this.api.post('/auth/login', {
-      username,
-      password,
-    });
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    return response.data;
+    try {
+      const response = await this.api.post('/auth/login', {
+        username,
+        password,
+      });
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || '登录失败',
+      };
+    }
   }
 
   /**
