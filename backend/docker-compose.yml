@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: video-showcase-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: video_showcase
+    ports:
+      - "5506:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - video-showcase-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: video-showcase-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/video_showcase?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root_password
+      JWT_SECRET: your-secret-key-change-this-in-production-environment-with-minimum-32-characters
+      FILE_STORAGE_PATH: /data/videos
+      FILE_STORAGE_URL: http://192.168.0.247:8080/api/files  # 修改为实际的 IP 地址
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./videos:/data/videos  # 本地视频存储（主机路径：./videos）
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - video-showcase-network
+
+networks:
+  video-showcase-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
