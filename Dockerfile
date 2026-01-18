@@ -23,15 +23,15 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# 安装 pnpm 和 serve（用于提供静态文件）
-RUN npm install -g pnpm serve
+# 安装 serve（用于提供静态文件）
+RUN npm install -g serve
 
 # 从构建阶段复制构建产物
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/client/public ./dist/
+COPY --from=builder /app/dist/public ./dist
 
 # 暴露端口
 EXPOSE 3000
 
 # 启动应用 - 使用 serve 提供静态文件
+# serve 会自动处理 SPA 路由，将所有请求重定向到 index.html
 CMD ["serve", "-s", "dist", "-l", "3000"]
