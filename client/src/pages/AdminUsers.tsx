@@ -141,9 +141,12 @@ export default function AdminUsers() {
         password: passwordData.newPassword,
       });
       
-      alert('密码修改成功');
+      alert('密码修改成功，请重新登录');
       setPasswordData({ userId: 0, newPassword: '', confirmPassword: '' });
       setIsPasswordOpen(false);
+      // 如果修改的是当前用户的密码，则退出登录
+      // 这样用户需要重新登录
+      window.location.href = '/login';
       fetchUsers();
     } catch (error) {
       console.error('修改密码失败:', error);
