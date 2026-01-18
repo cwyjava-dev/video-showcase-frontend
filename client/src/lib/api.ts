@@ -366,6 +366,15 @@ class ApiService {
     });
     return response.data;
   }
+
+  async uploadVideo(formData: FormData) {
+    const response = await this.api.post('/files/upload/video', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  }
 }
 
 // 导出单例

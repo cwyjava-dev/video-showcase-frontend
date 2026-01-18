@@ -49,8 +49,9 @@ export default function AdminVideos() {
   const fetchVideos = async () => {
     try {
       setLoading(true);
-      const response = await apiService.getVideos({ page: 1, size: 100 });
-      setVideos(response.content || []);
+      const response = await apiService.getVideos();
+      // 处理两种响应格式：数组或分页对象
+      setVideos(Array.isArray(response) ? response : (response.content || []));
     } catch (error) {
       console.error('获取视频列表失败:', error);
     } finally {
@@ -93,10 +94,14 @@ export default function AdminVideos() {
           uploadFormData.append('file', formData.videoFile);
           
           try {
-            // 这里需要后端提供文件上传接口
-            // 暂时使用本地 URL
-            videoUrl = URL.createObjectURL(formData.videoFile);
-            setUploadProgress(100);
+            // 调用后端文件上传接口
+            const uploadResponse = await apiService.uploadVideo(uploadFormData);
+            if (uploadResponse.success) {
+              videoUrl = uploadResponse.url;
+              setUploadProgress(100);
+            } else {
+              throw new Error(uploadResponse.message || '上传失败');
+            }
           } catch (error) {
             console.error('上传视频文件失败:', error);
             alert('上传视频文件失败，请检查文件大小或格式');
