@@ -34,11 +34,7 @@ services:
       - "3003:3000"
     environment:
       - NODE_ENV=production
-      - VITE_API_URL=http://localhost:8080/api
-      - VITE_FRONTEND_PORT=3003
-    depends_on:
-      mysql:
-        condition: service_healthy
+      - VITE_API_URL=http://backend:8080/api
     networks:
       - video-showcase-network
     restart: unless-stopped
