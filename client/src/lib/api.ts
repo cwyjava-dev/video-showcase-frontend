@@ -170,6 +170,14 @@ class ApiService {
     return response.data;
   }
 
+  /**
+   * 获取视频的标签
+   */
+  async getVideoTags(videoId: number) {
+    const response = await this.api.get(`/videos/${videoId}/tags`);
+    return response.data;
+  }
+
   // ==================== 分类相关 ====================
 
   /**

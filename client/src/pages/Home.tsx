@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import { apiService } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,22 +7,90 @@ import { Badge } from "@/components/ui/badge";
 import { Play, Search, Film, User, LogOut } from "lucide-react";
 import { Link } from "wouter";
 import { getLoginUrl } from "@/const";
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+
+interface Video {
+  id: number;
+  title: string;
+  description?: string;
+  thumbnailUrl?: string;
+  duration?: number;
+  views: number;
+  createdAt: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Tag {
+  id: number;
+  name: string;
+}
 
 export default function Home() {
   const { user, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [videosLoading, setVideosLoading] = useState(false);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [tagsLoading, setTagsLoading] = useState(true);
 
-  const { data: videos = [], isLoading: videosLoading } = trpc.videos.list.useQuery({
-    categoryId: selectedCategory,
-    tagIds: selectedTags.length > 0 ? selectedTags : undefined,
-    search: searchQuery || undefined,
-  });
+  // 加载分类
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await apiService.getCategories();
+        setCategories(Array.isArray(data) ? data : data.data || []);
+      } catch (error) {
+        console.error("加载分类失败:", error);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+    loadCategories();
+  }, []);
 
-  const { data: categories = [] } = trpc.categories.list.useQuery();
-  const { data: tags = [] } = trpc.tags.list.useQuery();
+  // 加载标签
+  useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const data = await apiService.getTags();
+        setTags(Array.isArray(data) ? data : data.data || []);
+      } catch (error) {
+        console.error("加载标签失败:", error);
+      } finally {
+        setTagsLoading(false);
+      }
+    };
+    loadTags();
+  }, []);
+
+  // 加载视频列表
+  useEffect(() => {
+    const loadVideos = async () => {
+      setVideosLoading(true);
+      try {
+        const data = await apiService.getVideos({
+          categoryId: selectedCategory,
+          search: searchQuery || undefined,
+        });
+        setVideos(Array.isArray(data) ? data : data.data || []);
+      } catch (error) {
+        console.error("加载视频失败:", error);
+        setVideos([]);
+      } finally {
+        setVideosLoading(false);
+      }
+    };
+    loadVideos();
+  }, [searchQuery, selectedCategory]);
 
   const handleTagToggle = (tagId: number) => {
     setSelectedTags(prev =>
@@ -49,7 +118,7 @@ export default function Home() {
             <div className="flex items-center gap-4">
               {isAuthenticated ? (
                 <>
-                  {user?.role === "admin" && (
+                  {user?.role === "ADMIN" && (
                     <Link href="/admin">
                       <Button variant="outline" className="gap-2">
                         <User className="w-4 h-4" />
@@ -59,7 +128,7 @@ export default function Home() {
                   )}
                   <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-card border border-border">
                     <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{user?.name || user?.email}</span>
+                    <span className="text-sm">{user?.displayName || user?.username}</span>
                   </div>
                   <Button variant="ghost" size="icon" onClick={() => logout()}>
                     <LogOut className="w-4 h-4" />
@@ -108,7 +177,7 @@ export default function Home() {
       <section className="py-8 border-b border-border/30">
         <div className="container">
           {/* Categories */}
-          {categories.length > 0 && (
+          {!categoriesLoading && categories.length > 0 && (
             <div className="mb-6">
               <h3 className="text-sm font-medium text-muted-foreground mb-3">分类</h3>
               <div className="flex flex-wrap gap-2">
@@ -134,7 +203,7 @@ export default function Home() {
           )}
 
           {/* Tags */}
-          {tags.length > 0 && (
+          {!tagsLoading && tags.length > 0 && (
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-3">标签</h3>
               <div className="flex flex-wrap gap-2">
@@ -182,7 +251,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {videos.map((video) => (
-                <Link key={video.id} href={`/video/${video.slug}`}>
+                <Link key={video.id} href={`/video/${video.id}`}>
                   <Card className="group overflow-hidden hover:shadow-elegant-lg transition-elegant cursor-pointer border-border/50 hover:border-primary/50">
                     <div className="relative aspect-video bg-muted overflow-hidden">
                       {video.thumbnailUrl ? (
@@ -217,7 +286,7 @@ export default function Home() {
                         </p>
                       )}
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{video.viewCount || 0} 次观看</span>
+                        <span>{video.views || 0} 次观看</span>
                         <span>{new Date(video.createdAt).toLocaleDateString('zh-CN')}</span>
                       </div>
                     </CardContent>

@@ -1,33 +1,80 @@
 import { useAuth } from "@/hooks/useAuth";
+import { apiService } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Film, User, Calendar, Eye, LogOut } from "lucide-react";
 import { Link, useParams, useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+interface Video {
+  id: number;
+  title: string;
+  description?: string;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  duration?: number;
+  views: number;
+  createdAt: string;
+  status: "published" | "draft" | "archived";
+  fileSize?: number;
+  mimeType?: string;
+}
+
+interface Tag {
+  id: number;
+  name: string;
+}
 
 export default function VideoDetail() {
-  const { slug } = useParams<{ slug: string }>();
+  const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
+  
+  const [video, setVideo] = useState<Video | null>(null);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: video, isLoading, error } = trpc.videos.getBySlug.useQuery(
-    { slug: slug || "" },
-    { enabled: !!slug }
-  );
-
-  const { data: videoTags = [] } = trpc.videos.getTags.useQuery(
-    { videoId: video?.id || 0 },
-    { enabled: !!video?.id }
-  );
-
-  const incrementViewsMutation = trpc.videos.incrementViews.useMutation();
-
+  // 加载视频详情
   useEffect(() => {
-    if (video?.id) {
-      incrementViewsMutation.mutate({ id: video.id });
-    }
+    const loadVideo = async () => {
+      if (!id) return;
+      
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await apiService.getVideoById(parseInt(id));
+        setVideo(data);
+        
+        // 增加观看次数
+        await apiService.incrementVideoViews(parseInt(id));
+      } catch (err) {
+        console.error("加载视频失败:", err);
+        setError("视频加载失败");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadVideo();
+  }, [id]);
+
+  // 加载视频标签
+  useEffect(() => {
+    const loadTags = async () => {
+      if (!video?.id) return;
+      
+      try {
+        const data = await apiService.getVideoTags(video.id);
+        setTags(Array.isArray(data) ? data : data.data || []);
+      } catch (err) {
+        console.error("加载标签失败:", err);
+      }
+    };
+    
+    loadTags();
   }, [video?.id]);
 
   if (error) {
@@ -67,7 +114,7 @@ export default function VideoDetail() {
             <div className="flex items-center gap-4">
               {isAuthenticated ? (
                 <>
-                  {user?.role === "admin" && (
+                  {user?.role === "ADMIN" && (
                     <Link href="/admin">
                       <Button variant="outline" className="gap-2">
                         <User className="w-4 h-4" />
@@ -77,7 +124,7 @@ export default function VideoDetail() {
                   )}
                   <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-card border border-border">
                     <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{user?.name || user?.email}</span>
+                    <span className="text-sm">{user?.displayName || user?.username}</span>
                   </div>
                   <Button variant="ghost" size="icon" onClick={() => logout()}>
                     <LogOut className="w-4 h-4" />
@@ -138,7 +185,7 @@ export default function VideoDetail() {
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Eye className="w-4 h-4" />
-                      <span>{video.viewCount || 0} 次观看</span>
+                      <span>{video.views || 0} 次观看</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
@@ -155,9 +202,9 @@ export default function VideoDetail() {
                     )}
                   </div>
 
-                  {videoTags.length > 0 && (
+                  {tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {videoTags.map((tag) => (
+                      {tags.map((tag) => (
                         <Badge key={tag.id} variant="secondary">
                           {tag.name}
                         </Badge>
