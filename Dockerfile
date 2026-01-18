@@ -30,8 +30,8 @@ RUN npm install -g serve
 COPY --from=builder /app/dist/public ./dist
 
 # 暴露端口
-EXPOSE 3000
+EXPOSE 3003
 
 # 启动应用 - 使用 serve 提供静态文件
 # serve 会自动处理 SPA 路由，将所有请求重定向到 index.html
-CMD ["serve", "-s", "dist", "-l", "3000"]
+CMD ["serve", "-s", "dist", "-l", "3003"]
