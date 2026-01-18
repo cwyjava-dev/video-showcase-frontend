@@ -1,8 +1,7 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { trpc } from "@/lib/trpc";
 import { ArrowLeft, Film, User, Calendar, Eye, LogOut } from "lucide-react";
 import { Link, useParams, useLocation } from "wouter";
 import { getLoginUrl } from "@/const";

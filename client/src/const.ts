@@ -1,6 +1,8 @@
-export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+// 常量定义
+export const COOKIE_NAME = "video_showcase_session";
+export const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
-// Generate login URL at runtime so redirect URI reflects the current origin.
+// 生成登录 URL
 export const getLoginUrl = () => {
   const oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
   const appId = import.meta.env.VITE_APP_ID;

@@ -1,7 +1,6 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { trpc } from "@/lib/trpc";
 import { Film, Tag, FolderOpen, ArrowLeft, Video, Plus } from "lucide-react";
 import { Link, useParams, useLocation } from "wouter";
 import { useEffect } from "react";

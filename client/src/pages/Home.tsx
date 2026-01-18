@@ -1,9 +1,8 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { trpc } from "@/lib/trpc";
 import { Play, Search, Film, User, LogOut } from "lucide-react";
 import { Link } from "wouter";
 import { getLoginUrl } from "@/const";
