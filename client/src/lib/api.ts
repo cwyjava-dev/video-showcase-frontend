@@ -10,7 +10,16 @@ class ApiService {
 
   constructor() {
     // 从环境变量或默认值获取 API 地址
-    this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+    // 在 Docker 中，使用 http://backend:8080/api
+    // 在本地开发中，使用 http://localhost:8080/api
+    const apiUrl = import.meta.env.VITE_API_URL;
+    if (apiUrl) {
+      this.baseURL = apiUrl;
+    } else {
+      // 判断是否是 Docker 环境
+      const isDocker = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+      this.baseURL = isDocker ? 'http://backend:8080/api' : 'http://localhost:8080/api';
+    }
     
     this.api = axios.create({
       baseURL: this.baseURL,
