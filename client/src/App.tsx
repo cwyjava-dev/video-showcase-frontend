@@ -7,11 +7,13 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import VideoDetail from "./pages/VideoDetail";
 import AdminDashboard from "./pages/AdminDashboard";
+import Login from "./pages/Login";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/login"} component={Login} />
       <Route path={"/video/:slug"} component={VideoDetail} />
       <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/admin/:section"} component={AdminDashboard} />
