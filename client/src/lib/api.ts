@@ -18,7 +18,13 @@ class ApiService {
     } else {
       // 判断是否是 Docker 环境
       const isDocker = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-      this.baseURL = isDocker ? 'http://backend:8080/api' : 'http://localhost:8080/api';
+      if (isDocker) {
+        // 在 Docker 中，使用主机 IP 地址
+        this.baseURL = `http://${window.location.hostname}:8080/api`;
+      } else {
+        // 本地开发
+        this.baseURL = 'http://localhost:8080/api';
+      }
     }
     
     this.api = axios.create({
