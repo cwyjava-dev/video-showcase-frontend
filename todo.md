@@ -51,3 +51,11 @@
 ## Bug修复
 - [x] 修复上传视频按黿点击错误
 - [x] 修复Select.Item空值错误
+
+## 字符编码修复
+- [x] 修复 MySQL 数据库字符编码问题
+- [x] 更新 init.sql 添加 UTF-8 配置
+- [x] 更新 application.yml 添加 JDBC 字符编码参数
+- [x] 更新 docker-compose.yml MySQL 配置
+- [ ] 在本地 Docker 环境中重新初始化数据库（需要用户执行）
+- [ ] 验证分类和标签显示正确
