@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Edit2, Trash2, ArrowLeft } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowLeft, Key } from 'lucide-react';
 import { Link } from 'wouter';
+import { apiService } from '@/lib/api';
 
 interface User {
   id: number;
@@ -21,11 +21,18 @@ export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [isPasswordOpen, setIsPasswordOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [passwordData, setPasswordData] = useState({
+    userId: 0,
+    newPassword: '',
+    confirmPassword: '',
+  });
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     displayName: '',
+    password: '',
     role: 'USER' as 'USER' | 'ADMIN',
   });
 
@@ -36,20 +43,11 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      // 这里需要后端提供获取用户列表的 API
-      // 暂时使用模拟数据
-      setUsers([
-        {
-          id: 1,
-          username: 'admin',
-          email: 'admin@example.com',
-          displayName: '管理员',
-          role: 'ADMIN',
-          createdAt: new Date().toISOString(),
-        },
-      ]);
+      const response = await apiService.getUsers();
+      setUsers(response || []);
     } catch (error) {
       console.error('获取用户列表失败:', error);
+      alert('获取用户列表失败');
     } finally {
       setLoading(false);
     }
@@ -58,14 +56,42 @@ export default function AdminUsers() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // 这里需要后端提供创建/更新用户的 API
-      console.log('保存用户:', formData);
-      setFormData({ username: '', email: '', displayName: '', role: 'USER' });
+      if (!formData.username || !formData.email) {
+        alert('用户名和邮箱不能为空');
+        return;
+      }
+
+      if (editingId) {
+        // 编辑用户
+        await apiService.updateUser(editingId, {
+          email: formData.email,
+          displayName: formData.displayName,
+          role: formData.role,
+        });
+        alert('用户更新成功');
+      } else {
+        // 创建新用户
+        if (!formData.password) {
+          alert('新建用户必须设置密码');
+          return;
+        }
+        await apiService.createUser({
+          username: formData.username,
+          email: formData.email,
+          displayName: formData.displayName,
+          password: formData.password,
+          role: formData.role,
+        });
+        alert('用户创建成功');
+      }
+      
+      setFormData({ username: '', email: '', displayName: '', password: '', role: 'USER' });
       setEditingId(null);
       setIsOpen(false);
       fetchUsers();
     } catch (error) {
       console.error('保存用户失败:', error);
+      alert('保存用户失败，请检查输入');
     }
   };
 
@@ -74,6 +100,7 @@ export default function AdminUsers() {
       username: user.username,
       email: user.email,
       displayName: user.displayName || '',
+      password: '',
       role: user.role,
     });
     setEditingId(user.id);
@@ -83,19 +110,56 @@ export default function AdminUsers() {
   const handleDelete = async (id: number) => {
     if (confirm('确定要删除这个用户吗？')) {
       try {
-        // 这里需要后端提供删除用户的 API
-        console.log('删除用户:', id);
+        await apiService.deleteUser(id);
         fetchUsers();
+        alert('用户删除成功');
       } catch (error) {
         console.error('删除用户失败:', error);
+        alert('删除用户失败');
       }
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!passwordData.newPassword || !passwordData.confirmPassword) {
+        alert('新密码不能为空');
+        return;
+      }
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        alert('两次输入的密码不一致');
+        return;
+      }
+      if (passwordData.newPassword.length < 6) {
+        alert('密码长度至少为 6 位');
+        return;
+      }
+
+      // 调用更新用户密码的 API
+      await apiService.updateUser(passwordData.userId, {
+        password: passwordData.newPassword,
+      });
+      
+      alert('密码修改成功');
+      setPasswordData({ userId: 0, newPassword: '', confirmPassword: '' });
+      setIsPasswordOpen(false);
+      fetchUsers();
+    } catch (error) {
+      console.error('修改密码失败:', error);
+      alert('修改密码失败');
     }
   };
 
   const handleCloseDialog = () => {
     setIsOpen(false);
     setEditingId(null);
-    setFormData({ username: '', email: '', displayName: '', role: 'USER' });
+    setFormData({ username: '', email: '', displayName: '', password: '', role: 'USER' });
+  };
+
+  const openPasswordDialog = (user: User) => {
+    setPasswordData({ userId: user.id, newPassword: '', confirmPassword: '' });
+    setIsPasswordOpen(true);
   };
 
   return (
@@ -113,7 +177,7 @@ export default function AdminUsers() {
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button onClick={() => { setEditingId(null); setFormData({ username: '', email: '', displayName: '', role: 'USER' }); }}>
+                <Button onClick={() => { setEditingId(null); setFormData({ username: '', email: '', displayName: '', password: '', role: 'USER' }); }}>
                   <Plus className="w-4 h-4 mr-2" />
                   新建用户
                 </Button>
@@ -151,17 +215,28 @@ export default function AdminUsers() {
                       placeholder="输入显示名称"
                     />
                   </div>
+                  {!editingId && (
+                    <div>
+                      <label className="text-sm font-medium">密码 *</label>
+                      <Input
+                        type="password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        placeholder="输入密码（至少 6 位）"
+                        required
+                      />
+                    </div>
+                  )}
                   <div>
                     <label className="text-sm font-medium">角色 *</label>
-                    <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value as 'USER' | 'ADMIN' })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="USER">普通用户</SelectItem>
-                        <SelectItem value="ADMIN">管理员</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <select
+                      value={formData.role}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value as 'USER' | 'ADMIN' })}
+                      className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                    >
+                      <option value="USER">普通用户</option>
+                      <option value="ADMIN">管理员</option>
+                    </select>
                   </div>
                   <div className="flex gap-2">
                     <Button type="submit" className="flex-1">
@@ -177,6 +252,45 @@ export default function AdminUsers() {
           </div>
         </div>
       </header>
+
+      {/* 修改密码对话框 */}
+      <Dialog open={isPasswordOpen} onOpenChange={setIsPasswordOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>修改密码</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleChangePassword} className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">新密码 *</label>
+              <Input
+                type="password"
+                value={passwordData.newPassword}
+                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                placeholder="输入新密码（至少 6 位）"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">确认密码 *</label>
+              <Input
+                type="password"
+                value={passwordData.confirmPassword}
+                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                placeholder="再次输入新密码"
+                required
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button type="submit" className="flex-1">
+                修改
+              </Button>
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setIsPasswordOpen(false)}>
+                取消
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <div className="container py-8 px-4 lg:px-8">
         <Card className="border-border/50 w-full">
@@ -224,6 +338,14 @@ export default function AdminUsers() {
                             onClick={() => handleEdit(user)}
                           >
                             <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openPasswordDialog(user)}
+                            title="修改密码"
+                          >
+                            <Key className="w-4 h-4" />
                           </Button>
                           <Button
                             size="sm"

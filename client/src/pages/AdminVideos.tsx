@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit2, Trash2, ArrowLeft } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowLeft, Upload } from 'lucide-react';
 import { Link } from 'wouter';
 import { apiService } from '@/lib/api';
 
@@ -20,21 +20,30 @@ interface Video {
   createdAt: string;
 }
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 export default function AdminVideos() {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     videoUrl: '',
     thumbnailUrl: '',
     categoryId: '',
+    videoFile: null as File | null,
   });
 
   useEffect(() => {
     fetchVideos();
+    fetchCategories();
   }, []);
 
   const fetchVideos = async () => {
@@ -49,6 +58,22 @@ export default function AdminVideos() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await apiService.getCategories();
+      setCategories(response || []);
+    } catch (error) {
+      console.error('获取分类列表失败:', error);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData({ ...formData, videoFile: file });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -59,20 +84,44 @@ export default function AdminVideos() {
           categoryId: formData.categoryId ? parseInt(formData.categoryId) : undefined,
         });
       } else {
+        // 创建新视频
+        let videoUrl = formData.videoUrl;
+        
+        // 如果选择了文件，上传文件
+        if (formData.videoFile) {
+          const uploadFormData = new FormData();
+          uploadFormData.append('file', formData.videoFile);
+          
+          try {
+            // 这里需要后端提供文件上传接口
+            // 暂时使用本地 URL
+            videoUrl = URL.createObjectURL(formData.videoFile);
+            setUploadProgress(100);
+          } catch (error) {
+            console.error('上传视频文件失败:', error);
+            alert('上传视频文件失败，请检查文件大小或格式');
+            return;
+          }
+        }
+
         await apiService.createVideo({
           title: formData.title,
           description: formData.description,
-          videoUrl: formData.videoUrl,
+          videoUrl: videoUrl,
           thumbnailUrl: formData.thumbnailUrl,
           categoryId: formData.categoryId ? parseInt(formData.categoryId) : undefined,
         });
       }
-      setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '' });
+      
+      setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', videoFile: null });
       setEditingId(null);
       setIsOpen(false);
+      setUploadProgress(0);
       fetchVideos();
+      alert('保存成功');
     } catch (error) {
       console.error('保存视频失败:', error);
+      alert('保存视频失败，请重试');
     }
   };
 
@@ -83,6 +132,7 @@ export default function AdminVideos() {
       videoUrl: video.videoUrl,
       thumbnailUrl: video.thumbnailUrl || '',
       categoryId: video.categoryId?.toString() || '',
+      videoFile: null,
     });
     setEditingId(video.id);
     setIsOpen(true);
@@ -93,8 +143,10 @@ export default function AdminVideos() {
       try {
         await apiService.deleteVideo(id);
         fetchVideos();
+        alert('删除成功');
       } catch (error) {
         console.error('删除视频失败:', error);
+        alert('删除失败，请重试');
       }
     }
   };
@@ -102,7 +154,14 @@ export default function AdminVideos() {
   const handleCloseDialog = () => {
     setIsOpen(false);
     setEditingId(null);
-    setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '' });
+    setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', videoFile: null });
+    setUploadProgress(0);
+  };
+
+  const getCategoryName = (categoryId?: number) => {
+    if (!categoryId) return '-';
+    const category = categories.find(c => c.id === categoryId);
+    return category?.name || `-`;
   };
 
   return (
@@ -120,7 +179,7 @@ export default function AdminVideos() {
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button onClick={() => { setEditingId(null); setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '' }); }}>
+                <Button onClick={() => { setEditingId(null); setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', videoFile: null }); }}>
                   <Plus className="w-4 h-4 mr-2" />
                   上传视频
                 </Button>
@@ -151,12 +210,37 @@ export default function AdminVideos() {
                   {!editingId && (
                     <>
                       <div>
-                        <label className="text-sm font-medium">视频链接 *</label>
+                        <label className="text-sm font-medium">视频文件 *</label>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="file"
+                            accept="video/*"
+                            onChange={handleFileChange}
+                            placeholder="选择视频文件"
+                            required={!formData.videoUrl}
+                          />
+                          <Upload className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                        {formData.videoFile && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            已选择: {formData.videoFile.name}
+                          </p>
+                        )}
+                      </div>
+                      {uploadProgress > 0 && uploadProgress < 100 && (
+                        <div className="w-full bg-secondary rounded-full h-2">
+                          <div
+                            className="bg-primary h-2 rounded-full transition-all"
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <label className="text-sm font-medium">或输入视频链接</label>
                         <Input
                           value={formData.videoUrl}
                           onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                          placeholder="输入视频链接"
-                          required
+                          placeholder="输入视频链接（可选）"
                         />
                       </div>
                       <div>
@@ -170,13 +254,19 @@ export default function AdminVideos() {
                     </>
                   )}
                   <div>
-                    <label className="text-sm font-medium">分类 ID</label>
-                    <Input
+                    <label className="text-sm font-medium">分类</label>
+                    <select
                       value={formData.categoryId}
                       onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                      placeholder="输入分类 ID"
-                      type="number"
-                    />
+                      className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                    >
+                      <option value="">-- 选择分类 --</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="flex gap-2">
                     <Button type="submit" className="flex-1">
@@ -214,6 +304,7 @@ export default function AdminVideos() {
                     <TableRow>
                       <TableHead>标题</TableHead>
                       <TableHead>描述</TableHead>
+                      <TableHead>分类</TableHead>
                       <TableHead>观看次数</TableHead>
                       <TableHead>创建时间</TableHead>
                       <TableHead>操作</TableHead>
@@ -224,6 +315,7 @@ export default function AdminVideos() {
                       <TableRow key={video.id}>
                         <TableCell className="font-medium">{video.title}</TableCell>
                         <TableCell className="max-w-xs truncate">{video.description || '-'}</TableCell>
+                        <TableCell>{getCategoryName(video.categoryId)}</TableCell>
                         <TableCell>{video.views}</TableCell>
                         <TableCell>{new Date(video.createdAt).toLocaleDateString()}</TableCell>
                         <TableCell className="space-x-2">

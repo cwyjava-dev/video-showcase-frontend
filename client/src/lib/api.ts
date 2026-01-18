@@ -293,6 +293,62 @@ class ApiService {
     return response.data;
   }
 
+  // ==================== 用户管理 ====================
+
+  /**
+   * 获取所有用户
+   */
+  async getUsers() {
+    const response = await this.api.get('/users');
+    return response.data;
+  }
+
+  /**
+   * 获取用户详情
+   */
+  async getUserById(id: number) {
+    const response = await this.api.get(`/users/${id}`);
+    return response.data;
+  }
+
+  /**
+   * 创建用户（仅管理员）
+   */
+  async createUser(data: {
+    username: string;
+    email: string;
+    password: string;
+    displayName?: string;
+    role?: 'USER' | 'ADMIN';
+  }) {
+    const response = await this.api.post('/users', data);
+    return response.data;
+  }
+
+  /**
+   * 更新用户（仅管理员）
+   */
+  async updateUser(
+    id: number,
+    data: {
+      email?: string;
+      displayName?: string;
+      password?: string;
+      role?: 'USER' | 'ADMIN';
+    }
+  ) {
+    const response = await this.api.put(`/users/${id}`, data);
+    return response.data;
+  }
+
+  /**
+   * 删除用户（仅管理员）
+   */
+  async deleteUser(id: number) {
+    const response = await this.api.delete(`/users/${id}`);
+    return response.data;
+  }
+
   // ==================== 文件上传 ====================
 
   /**
