@@ -165,12 +165,18 @@ export default function VideoDetail() {
             {/* Video Player */}
             <div className="lg:col-span-2 space-y-6">
               <Card className="overflow-hidden shadow-elegant-lg border-border/50">
-                <div className="aspect-video bg-black">
+                <div className="aspect-video bg-black relative">
                   <video
                     controls
                     className="w-full h-full"
                     poster={video.thumbnailUrl || undefined}
-                    src={video.videoUrl}
+                    src={video.videoUrl.replace('/api/files/videos/', '/api/stream/video/')}
+                    preload="metadata"
+                    controlsList="nodownload"
+                    crossOrigin="anonymous"
+                    onLoadStart={() => console.log('视频开始加载')}
+                    onCanPlay={() => console.log('视频可以播放')}
+                    onLoadedMetadata={() => console.log('视频元数据已加载')}
                   >
                     您的浏览器不支持视频播放。
                   </video>
