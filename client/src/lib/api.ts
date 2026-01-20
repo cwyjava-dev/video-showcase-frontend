@@ -128,6 +128,14 @@ class ApiService {
     categoryId?: number;
     search?: string;
   }) {
+    // 如果有搜索关键字，使用搜索接口
+    if (params?.search) {
+      const response = await this.api.get('/videos/search', { 
+        params: { keyword: params.search } 
+      });
+      return response.data;
+    }
+    // 否则获取所有视频
     const response = await this.api.get('/videos', { params });
     return response.data;
   }
