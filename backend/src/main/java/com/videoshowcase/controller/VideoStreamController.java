@@ -172,7 +172,7 @@ public class VideoStreamController {
         private final long start;
         private final long length;
 
-        public RangeFileResource(Resource resource, long start, long length) {
+        public RangeFileResource(Resource resource, long start, long length) throws IOException {
             super(resource.getFile());
             this.start = start;
             this.length = length;
