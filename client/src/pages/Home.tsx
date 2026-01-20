@@ -1,4 +1,3 @@
-import { useAuth } from "@/hooks/useAuth";
 import { apiService } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +8,7 @@ import { Link } from "wouter";
 import { getLoginUrl } from "@/const";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Video {
   id: number;
@@ -74,38 +74,44 @@ export default function Home() {
     loadTags();
   }, []);
 
-  // 加载视频列表
+  // 加载视频列表（带防抖）
   useEffect(() => {
-    const loadVideos = async () => {
-      if (videos.length === 0) {
-        setVideosLoading(true);
-      }
-      try {
-        const data = await apiService.getVideos({
-          categoryId: selectedCategory,
-          search: searchQuery || undefined,
-        });
-        setVideos(Array.isArray(data) ? data : data.data || []);
-      } catch (error) {
-        console.error("加载视频失败:", error);
-        setVideos([]);
-      } finally {
-        setVideosLoading(false);
-      }
-    };
-    loadVideos();
+    const timer = setTimeout(() => {
+      const loadVideos = async () => {
+        if (videos.length === 0) {
+          setVideosLoading(true);
+        }
+        try {
+          const data = await apiService.getVideos({
+            categoryId: selectedCategory,
+            search: searchQuery || undefined,
+          });
+          setVideos(Array.isArray(data) ? data : data.data || []);
+        } catch (error) {
+          console.error("加载视频失败:", error);
+          setVideos([]);
+        } finally {
+          setVideosLoading(false);
+        }
+      };
+      loadVideos();
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [searchQuery, selectedCategory]);
 
   const handleTagToggle = (tagId: number) => {
     setSelectedTags(prev =>
-      prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
+      prev.includes(tagId)
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
     );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-dark">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50">
+      <header className="border-b border-border/30 sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <Link href="/">
@@ -192,11 +198,11 @@ export default function Home() {
           {/* Categories */}
           {!categoriesLoading && categories.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-muted-foreground mb-3">分类</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-3">分类</h3>
               <div className="flex flex-wrap gap-2">
                 <Badge
                   variant={selectedCategory === undefined ? "default" : "outline"}
-                  className="cursor-pointer px-4 py-2 transition-elegant hover:scale-105"
+                  className="cursor-pointer"
                   onClick={() => setSelectedCategory(undefined)}
                 >
                   全部
@@ -205,7 +211,7 @@ export default function Home() {
                   <Badge
                     key={category.id}
                     variant={selectedCategory === category.id ? "default" : "outline"}
-                    className="cursor-pointer px-4 py-2 transition-elegant hover:scale-105"
+                    className="cursor-pointer"
                     onClick={() => setSelectedCategory(category.id)}
                   >
                     {category.name}
@@ -218,13 +224,13 @@ export default function Home() {
           {/* Tags */}
           {!tagsLoading && tags.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-3">标签</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-3">标签</h3>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
                   <Badge
                     key={tag.id}
-                    variant={selectedTags.includes(tag.id) ? "default" : "secondary"}
-                    className="cursor-pointer px-3 py-1.5 transition-elegant hover:scale-105"
+                    variant={selectedTags.includes(tag.id) ? "default" : "outline"}
+                    className="cursor-pointer"
                     onClick={() => handleTagToggle(tag.id)}
                   >
                     {tag.name}
@@ -300,7 +306,7 @@ export default function Home() {
                       )}
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>{video.views || 0} 次观看</span>
-                        <span>{new Date(video.createdAt).toLocaleDateString('zh-CN')}</span>
+                        <span>{new Date(video.createdAt).toLocaleDateString()}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -310,13 +316,6 @@ export default function Home() {
           )}
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border/30 py-8 mt-12">
-        <div className="container text-center text-sm text-muted-foreground">
-          <p>© 2026 视频展示平台 - 优雅呈现每一刻</p>
-        </div>
-      </footer>
     </div>
   );
 }
