@@ -95,7 +95,31 @@ public class VideoService {
             if (!videoRepository.existsById(video.getId())) {
                 throw new RuntimeException("视频不存在");
             }
-            return videoRepository.save(video);
+            Video existingVideo = videoRepository.findById(video.getId())
+                .orElseThrow(() -> new RuntimeException("视频不存在"));
+            
+            // 只更新允许修改的字段
+            if (video.getTitle() != null) {
+                existingVideo.setTitle(video.getTitle());
+            }
+            if (video.getDescription() != null) {
+                existingVideo.setDescription(video.getDescription());
+            }
+            if (video.getCategory() != null) {
+                existingVideo.setCategory(video.getCategory());
+            }
+            if (video.getThumbnailUrl() != null) {
+                existingVideo.setThumbnailUrl(video.getThumbnailUrl());
+            }
+            if (video.getStatus() != null) {
+                existingVideo.setStatus(video.getStatus());
+            }
+            if (video.getTags() != null) {
+                existingVideo.setTags(video.getTags());
+            }
+            
+            existingVideo.setUpdatedAt(new java.util.Date());
+            return videoRepository.save(existingVideo);
         } catch (Exception e) {
             log.error("更新视频失败", e);
             throw new RuntimeException("更新视频失败: " + e.getMessage());
