@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Play, Search, Film, User, LogOut } from "lucide-react";
+import { Play, Search, Film, User, LogOut, Moon, Sun } from "lucide-react";
 import { Link } from "wouter";
 import { getLoginUrl } from "@/const";
 import { useState, useEffect } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface Video {
   id: number;
@@ -31,6 +32,7 @@ interface Tag {
 
 export default function Home() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
@@ -116,6 +118,15 @@ export default function Home() {
             </Link>
 
             <div className="flex items-center gap-4">
+              {toggleTheme && (
+                <Button variant="ghost" size="icon" onClick={toggleTheme} title="切换主题">
+                  {theme === 'dark' ? (
+                    <Sun className="w-4 h-4" />
+                  ) : (
+                    <Moon className="w-4 h-4" />
+                  )}
+                </Button>
+              )}
               {isAuthenticated ? (
                 <>
                   {user?.role === "ADMIN" && (
