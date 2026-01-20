@@ -77,7 +77,9 @@ export default function Home() {
   // 加载视频列表
   useEffect(() => {
     const loadVideos = async () => {
-      setVideosLoading(true);
+      if (videos.length === 0) {
+        setVideosLoading(true);
+      }
       try {
         const data = await apiService.getVideos({
           categoryId: selectedCategory,
