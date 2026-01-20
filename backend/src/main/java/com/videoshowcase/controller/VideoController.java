@@ -23,23 +23,45 @@ public class VideoController {
     @GetMapping
     @Operation(summary = "获取视频列表")
     public ResponseEntity<List<Video>> getAllVideos() {
-        return ResponseEntity.ok(videoService.getAllVideos());
+        List<Video> videos = videoService.getAllVideos();
+        // 转换 videoUrl 为流媒体 URL
+        videos.forEach(video -> {
+            if (video.getVideoUrl() != null && video.getVideoUrl().contains("/api/files/videos/")) {
+                video.setVideoUrl(video.getVideoUrl().replace("/api/files/videos/", "/api/stream/video/"));
+            }
+        });
+        return ResponseEntity.ok(videos);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "获取视频详情")
+    @Operation(summary = "\u83b7\u53d6\u89c6\u9891\u8be6\u60c5")
     public ResponseEntity<Video> getVideoById(@PathVariable Long id) {
-        return ResponseEntity.ok(videoService.getVideoById(id));
+        Video video = videoService.getVideoById(id);
+        // \u8f6c\u6362 videoUrl \u4e3a\u6d41\u5a92\u4f53 URL
+        if (video.getVideoUrl() != null && video.getVideoUrl().contains("/api/files/videos/")) {
+            String filename = video.getVideoUrl().substring(video.getVideoUrl().lastIndexOf("/") + 1);
+            video.setVideoUrl(video.getVideoUrl().replace("/api/files/videos/", "/api/stream/video/"));
+        }
+        return ResponseEntity.ok(video);
     }
 
     @GetMapping("/search")
-    @Operation(summary = "搜索视频")
+    @Operation(summary = "\u641c\u7d22\u89c6\u9891")
     public ResponseEntity<List<Video>> searchVideos(@RequestParam(required = false, defaultValue = "") String keyword) {
-        // 如果关键字为空，返回所有已发布的视频
+        // \u5982\u679c\u5173\u952e\u5b57\u4e3a\u7a7a\uff0c\u8fd4\u56de\u6240\u6709\u5df2\u53d1\u5e03\u7684\u89c6\u9891
+        List<Video> videos;
         if (keyword == null || keyword.trim().isEmpty()) {
-            return ResponseEntity.ok(videoService.getAllPublishedVideos());
+            videos = videoService.getAllPublishedVideos();
+        } else {
+            videos = videoService.searchVideos(keyword.trim());
         }
-        return ResponseEntity.ok(videoService.searchVideos(keyword.trim()));
+        // \u8f6c\u6362 videoUrl \u4e3a\u6d41\u5a92\u4f53 URL
+        videos.forEach(video -> {
+            if (video.getVideoUrl() != null && video.getVideoUrl().contains("/api/files/videos/")) {
+                video.setVideoUrl(video.getVideoUrl().replace("/api/files/videos/", "/api/stream/video/"));
+            }
+        });
+        return ResponseEntity.ok(videos);
     }
 
     @PostMapping("/{id}/views")

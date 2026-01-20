@@ -170,13 +170,13 @@ export default function VideoDetail() {
                     controls
                     className="w-full h-full"
                     poster={video.thumbnailUrl || undefined}
-                    src={video.videoUrl.replace('/api/files/videos/', '/api/stream/video/')}
+                    src={video.videoUrl}
                     preload="metadata"
                     controlsList="nodownload"
                     crossOrigin="anonymous"
-                    onLoadStart={() => console.log('视频开始加载')}
-                    onCanPlay={() => console.log('视频可以播放')}
-                    onLoadedMetadata={() => console.log('视频元数据已加载')}
+                    onLoadStart={() => console.log('\u89c6\u9891\u5f00\u59cb\u52a0\u8f7d')}
+                    onCanPlay={() => console.log('\u89c6\u9891\u53ef\u4ee5\u64ad\u653e')}
+                    onLoadedMetadata={() => console.log('\u89c6\u9891\u5143\u6570\u636e\u5df2\u52a0\u8f7d')}
                   >
                     您的浏览器不支持视频播放。
                   </video>
