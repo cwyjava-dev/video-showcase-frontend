@@ -119,6 +119,15 @@ public class VideoService {
     }
 
     /**
+     * 获取所有已发布的视频
+     */
+    public List<Video> getAllPublishedVideos() {
+        return videoRepository.findAll().stream()
+            .filter(v -> v.getStatus() == Video.VideoStatus.PUBLISHED)
+            .collect(Collectors.toList());
+    }
+
+    /**
      * 获取视频的所有标签
      */
     public List<VideoTag> getVideoTags(Long videoId) {

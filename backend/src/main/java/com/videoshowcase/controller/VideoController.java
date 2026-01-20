@@ -34,8 +34,12 @@ public class VideoController {
 
     @GetMapping("/search")
     @Operation(summary = "搜索视频")
-    public ResponseEntity<List<Video>> searchVideos(@RequestParam String keyword) {
-        return ResponseEntity.ok(videoService.searchVideos(keyword));
+    public ResponseEntity<List<Video>> searchVideos(@RequestParam(required = false, defaultValue = "") String keyword) {
+        // 如果关键字为空，返回所有已发布的视频
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return ResponseEntity.ok(videoService.getAllPublishedVideos());
+        }
+        return ResponseEntity.ok(videoService.searchVideos(keyword.trim()));
     }
 
     @PostMapping("/{id}/views")
@@ -73,8 +77,14 @@ public class VideoController {
     }
 
     @GetMapping("/{id}/tags")
-    @Operation(summary = "\u83b7\u53d6\u89c6\u9891\u7684\u6240\u6709\u6807\u7b7e")
+    @Operation(summary = "获取视频的所有标签")
     public ResponseEntity<List<VideoTag>> getVideoTags(@PathVariable Long id) {
         return ResponseEntity.ok(videoService.getVideoTags(id));
+    }
+
+    @GetMapping("/published/all")
+    @Operation(summary = "获取所有已发布的视频")
+    public ResponseEntity<List<Video>> getAllPublishedVideos() {
+        return ResponseEntity.ok(videoService.getAllPublishedVideos());
     }
 }
