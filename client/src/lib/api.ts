@@ -128,15 +128,21 @@ class ApiService {
     categoryId?: number;
     search?: string;
   }) {
-    // 如果有搜索关键字，使用搜索接口
+    // 构建查询参数
+    const queryParams: any = {};
+    if (params?.page) queryParams.page = params.page;
+    if (params?.size) queryParams.size = params.size;
+    if (params?.categoryId) queryParams.categoryId = params.categoryId;
+    
+    // 如果有搜索关键字，使用搜索接口并传递分类参数
     if (params?.search) {
-      const response = await this.api.get('/videos/search', { 
-        params: { keyword: params.search } 
-      });
+      queryParams.keyword = params.search;
+      const response = await this.api.get('/videos/search', { params: queryParams });
       return response.data;
     }
+    
     // 否则获取所有视频
-    const response = await this.api.get('/videos', { params });
+    const response = await this.api.get('/videos', { params: queryParams });
     return response.data;
   }
 
@@ -218,7 +224,8 @@ class ApiService {
    */
   async getCategories() {
     const response = await this.api.get('/categories');
-    return response.data;
+    // 处理响应格式，可能是数组或对象
+    return Array.isArray(response.data) ? response.data : (response.data?.data || []);
   }
 
   /**
@@ -263,7 +270,8 @@ class ApiService {
    */
   async getTags() {
     const response = await this.api.get('/tags');
-    return response.data;
+    // 处理响应格式，可能是数组或对象
+    return Array.isArray(response.data) ? response.data : (response.data?.data || []);
   }
 
   /**

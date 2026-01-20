@@ -33,6 +33,47 @@ public class VideoController {
         return ResponseEntity.ok(videos);
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "搜索视频")
+    public ResponseEntity<List<Video>> searchVideos(
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false) Long categoryId) {
+        // 如果关键字为空，返回所有已发布的视频
+        List<Video> videos;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            videos = videoService.getAllPublishedVideos();
+        } else {
+            videos = videoService.searchVideos(keyword.trim());
+        }
+        
+        // 如果指定了分类，按分类筛选
+        if (categoryId != null) {
+            videos = videos.stream()
+                .filter(v -> v.getCategory() != null && v.getCategory().getId().equals(categoryId))
+                .collect(java.util.stream.Collectors.toList());
+        }
+        
+        // 转换 videoUrl 为流媒体 URL
+        videos.forEach(video -> {
+            if (video.getVideoUrl() != null && video.getVideoUrl().contains("/api/files/videos/")) {
+                video.setVideoUrl(video.getVideoUrl().replace("/api/files/videos/", "/api/stream/video/"));
+            }
+        });
+        return ResponseEntity.ok(videos);
+    }
+
+    @GetMapping("/published/all")
+    @Operation(summary = "\u83b7\u53d6\u6240\u6709\u5df2\u53d1\u5e03\u7684\u89c6\u9891")
+    public ResponseEntity<List<Video>> getAllPublishedVideos() {
+        return ResponseEntity.ok(videoService.getAllPublishedVideos());
+    }
+
+    @GetMapping("/{id}/tags")
+    @Operation(summary = "\u83b7\u53d6\u89c6\u9891\u7684\u6240\u6709\u6807\u7b7e")
+    public ResponseEntity<List<VideoTag>> getVideoTags(@PathVariable Long id) {
+        return ResponseEntity.ok(videoService.getVideoTags(id));
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "\u83b7\u53d6\u89c6\u9891\u8be6\u60c5")
     public ResponseEntity<Video> getVideoById(@PathVariable Long id) {
@@ -43,25 +84,6 @@ public class VideoController {
             video.setVideoUrl(video.getVideoUrl().replace("/api/files/videos/", "/api/stream/video/"));
         }
         return ResponseEntity.ok(video);
-    }
-
-    @GetMapping("/search")
-    @Operation(summary = "\u641c\u7d22\u89c6\u9891")
-    public ResponseEntity<List<Video>> searchVideos(@RequestParam(required = false, defaultValue = "") String keyword) {
-        // \u5982\u679c\u5173\u952e\u5b57\u4e3a\u7a7a\uff0c\u8fd4\u56de\u6240\u6709\u5df2\u53d1\u5e03\u7684\u89c6\u9891
-        List<Video> videos;
-        if (keyword == null || keyword.trim().isEmpty()) {
-            videos = videoService.getAllPublishedVideos();
-        } else {
-            videos = videoService.searchVideos(keyword.trim());
-        }
-        // \u8f6c\u6362 videoUrl \u4e3a\u6d41\u5a92\u4f53 URL
-        videos.forEach(video -> {
-            if (video.getVideoUrl() != null && video.getVideoUrl().contains("/api/files/videos/")) {
-                video.setVideoUrl(video.getVideoUrl().replace("/api/files/videos/", "/api/stream/video/"));
-            }
-        });
-        return ResponseEntity.ok(videos);
     }
 
     @PostMapping("/{id}/views")
@@ -96,17 +118,5 @@ public class VideoController {
     public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
         videoService.deleteVideo(id);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/{id}/tags")
-    @Operation(summary = "获取视频的所有标签")
-    public ResponseEntity<List<VideoTag>> getVideoTags(@PathVariable Long id) {
-        return ResponseEntity.ok(videoService.getVideoTags(id));
-    }
-
-    @GetMapping("/published/all")
-    @Operation(summary = "获取所有已发布的视频")
-    public ResponseEntity<List<Video>> getAllPublishedVideos() {
-        return ResponseEntity.ok(videoService.getAllPublishedVideos());
     }
 }

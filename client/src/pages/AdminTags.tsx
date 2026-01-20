@@ -35,9 +35,11 @@ export default function AdminTags() {
     try {
       setLoading(true);
       const response = await apiService.getTags();
-      setTags(response || []);
+      const data = Array.isArray(response) ? response : (response?.data || []);
+      setTags(data);
     } catch (error) {
       console.error('获取标签列表失败:', error);
+      setTags([]);
     } finally {
       setLoading(false);
     }

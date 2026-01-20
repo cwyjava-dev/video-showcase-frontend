@@ -35,9 +35,11 @@ export default function AdminCategories() {
     try {
       setLoading(true);
       const response = await apiService.getCategories();
-      setCategories(response || []);
+      const data = Array.isArray(response) ? response : (response?.data || []);
+      setCategories(data);
     } catch (error) {
       console.error('获取分类列表失败:', error);
+      setCategories([]);
     } finally {
       setLoading(false);
     }
