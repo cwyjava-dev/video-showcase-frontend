@@ -56,8 +56,7 @@ public class VideoService {
      */
     public List<Video> searchVideos(String keyword) {
         return videoRepository.findAll().stream()
-            .filter(v -> v.getStatus() == Video.VideoStatus.PUBLISHED)
-            .filter(v -> v.getTitle().toLowerCase().contains(keyword.toLowerCase()))
+            .filter(v -> v.getTitle() != null && v.getTitle().toLowerCase().contains(keyword.toLowerCase()))
             .collect(Collectors.toList());
     }
 
@@ -119,12 +118,10 @@ public class VideoService {
     }
 
     /**
-     * 获取所有已发布的视频
+     * 获取所有视频（不管状态）
      */
     public List<Video> getAllPublishedVideos() {
-        return videoRepository.findAll().stream()
-            .filter(v -> v.getStatus() == Video.VideoStatus.PUBLISHED)
-            .collect(Collectors.toList());
+        return videoRepository.findAll();
     }
 
     /**
