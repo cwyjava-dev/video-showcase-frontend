@@ -53,10 +53,23 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        // 支持本地开发、Docker 和 Manus 开发环境
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:3000",
+            "http://localhost:3003",
+            "http://localhost:5173",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:3003",
+            "http://127.0.0.1:5173",
+            "http://192.168.0.247:3000",
+            "http://192.168.0.247:3003",
+            "http://192.168.0.247:5173",
+            "https://5173-if8j6cfqevtq016nzcu7k-5e63aeeb.sg1.manus.computer",
+            "https://3000-if8j6cfqevtq016nzcu7k-5e63aeeb.sg1.manus.computer"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(false);
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

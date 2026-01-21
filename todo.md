@@ -134,3 +134,22 @@
 - [x] 修改前端 Token 存储（localStorage + HttpOnly Cookie）
 - [x] 修改前端请求拦截器，支持自动刷新
 - [ ] 测试双 Token 方案
+
+
+## 双 Token 实现后的问题
+- [x] 修复登录时 Network Error - CORS 配置不允许 Cookie
+- [x] 修复首页视频不显示 - CORS 配置不允许 Cookie
+
+
+## 403 Forbidden 错误
+- [x] 修复 403 Forbidden 错误 - 添加端口 3003 到 CORS 配置
+
+
+## 前端重新设计 - YouTube 风格
+- [x] 设计 YouTube 风格的布局和配色
+- [x] 创建顶部导航栏组件
+- [x] 创建可折叠侧边栏组件
+- [x] 重新设计首页视频网格布局
+- [x] 重新设计视频详情页面
+- [x] 优化深色主题和响应式设计
+- [x] 测试前端重新设计
