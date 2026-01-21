@@ -20,7 +20,7 @@ export default function YouTubeSidebar({
   categories = [],
   onCategorySelect,
 }: YouTubeSidebarProps) {
-  const [showCategories, setShowCategories] = useState(false);
+  const [showCategories, setShowCategories] = useState(true); // 初始为展开状态
 
   const menuItems = [
     { icon: Home, label: '首页', href: '/', id: 'home' },
