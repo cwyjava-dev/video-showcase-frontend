@@ -51,7 +51,7 @@ export default function YouTubeHeader({ onMenuClick, onSearch }: YouTubeHeaderPr
           <form onSubmit={handleSearch} className="flex">
             <Input
               type="text"
-              placeholder="搜索视频..."
+              placeholder={t('common.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="rounded-l-full bg-input border-input text-foreground placeholder:text-muted-foreground"
