@@ -162,3 +162,9 @@
 ## 侧边栏按针改进
 - [x] 改进侧边栏折叠按针设计，使用 hamburger menu 图标
 - [x] 添加正确的 aria-label 无障礙属性
+
+
+## Header 按针改进
+- [x] 将 toggle menu 按针移到 header 中
+- [x] 从侧边栏中移除折叠按针
+- [x] 实现 header 和侧边栏之间的通信

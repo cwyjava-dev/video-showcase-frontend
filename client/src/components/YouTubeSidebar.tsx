@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
-import { Home, Compass, Clock, ThumbsUp, Menu, X } from 'lucide-react';
+import { Home, Compass, Clock, ThumbsUp, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface YouTubeSidebarProps {
   isOpen: boolean;
   onClose?: () => void;
+  isCollapsed?: boolean;
   selectedCategory?: number;
   categories?: Array<{ id: number; name: string }>;
   onCategorySelect?: (categoryId: number | undefined) => void;
@@ -14,12 +15,12 @@ interface YouTubeSidebarProps {
 export default function YouTubeSidebar({
   isOpen,
   onClose,
+  isCollapsed = false,
   selectedCategory,
   categories = [],
   onCategorySelect,
 }: YouTubeSidebarProps) {
   const [showCategories, setShowCategories] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
     { icon: Home, label: '首页', href: '/', id: 'home' },
@@ -51,20 +52,6 @@ export default function YouTubeSidebar({
         )}
       >
         <nav className="p-3 space-y-2">
-          {/* Collapse toggle button (desktop only) */}
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex items-center justify-center w-full px-3 py-2 rounded-lg hover:bg-secondary text-foreground transition-colors mb-2"
-            aria-label={isCollapsed ? 'Toggle menu' : 'Toggle menu'}
-            aria-expanded={!isCollapsed}
-          >
-            {isCollapsed ? (
-              <Menu size={24} />
-            ) : (
-              <X size={24} />
-            )}
-          </button>
-
           {/* Main menu items */}
           {menuItems.map((item) => (
             <Link key={item.id} href={item.href}>
@@ -96,17 +83,13 @@ export default function YouTubeSidebar({
                 aria-expanded={showCategories}
               >
                 <span className="text-sm font-medium">分类</span>
-                <svg
+                <ChevronDown
+                  size={18}
                   className={cn(
-                    'w-4 h-4 transition-transform',
+                    'transition-transform',
                     showCategories && 'rotate-180'
                   )}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
+                />
               </button>
 
               {showCategories && (

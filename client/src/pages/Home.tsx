@@ -24,6 +24,7 @@ interface Category {
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
 
@@ -77,11 +78,20 @@ export default function Home() {
     setSearchQuery(query);
   };
 
+  const handleMenuToggle = () => {
+    // 在桌面版本上切换折叠状态，在移动版本上切换打开状态
+    if (window.innerWidth >= 1024) {
+      setSidebarCollapsed(!sidebarCollapsed);
+    } else {
+      setSidebarOpen(!sidebarOpen);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
       {/* Header */}
       <YouTubeHeader
-        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+        onMenuClick={handleMenuToggle}
         onSearch={handleSearch}
       />
 
@@ -90,6 +100,7 @@ export default function Home() {
         <YouTubeSidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          isCollapsed={sidebarCollapsed}
           selectedCategory={selectedCategory}
           categories={categories}
           onCategorySelect={setSelectedCategory}
