@@ -32,7 +32,7 @@ export default function Home() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true); // 简化为单一的加载状态
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
 
   // 监听窗口大小变化
   useEffect(() => {
@@ -51,8 +51,32 @@ export default function Home() {
     return 4;
   };
 
-  // 加载分类
+  // 加载视频列表（优先加载，无防抖延迟）
   useEffect(() => {
+    setIsLoading(true); // 立即设置为加载中
+
+    const loadVideos = async () => {
+      try {
+        const data = await apiService.getVideos({
+          categoryId: selectedCategory,
+          search: searchQuery || undefined,
+        });
+        setVideos(Array.isArray(data) ? data : data.data || []);
+      } catch (error) {
+        console.error("加载视频失败:", error);
+        setVideos([]);
+      } finally {
+        setIsLoading(false); // 加载完成，设置为不加载
+      }
+    };
+    
+    loadVideos();
+  }, [searchQuery, selectedCategory]);
+
+  // 加载分类（延迟加载，在视频列表之后）
+  useEffect(() => {
+    setCategoriesLoading(true);
+    
     const loadCategories = async () => {
       try {
         const data = await apiService.getCategories();
@@ -63,36 +87,9 @@ export default function Home() {
         setCategoriesLoading(false);
       }
     };
+    
     loadCategories();
   }, []);
-
-  // 加载视频列表（带防抖）
-  useEffect(() => {
-    setIsLoading(true); // 立即设置为加载中
-
-    // 防抖延迟
-    const timer = setTimeout(() => {
-      const loadVideos = async () => {
-        try {
-          const data = await apiService.getVideos({
-            categoryId: selectedCategory,
-            search: searchQuery || undefined,
-          });
-          setVideos(Array.isArray(data) ? data : data.data || []);
-        } catch (error) {
-          console.error("加载视频失败:", error);
-          setVideos([]);
-        } finally {
-          setIsLoading(false); // 加载完成，设置为不加载
-        }
-      };
-      loadVideos();
-    }, 300); // 防抖延迟 300ms
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchQuery, selectedCategory]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
