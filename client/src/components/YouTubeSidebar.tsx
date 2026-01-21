@@ -19,6 +19,7 @@ export default function YouTubeSidebar({
   onCategorySelect,
 }: YouTubeSidebarProps) {
   const [showCategories, setShowCategories] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
     { icon: Home, label: '首页', href: '/', id: 'home' },
@@ -40,12 +41,31 @@ export default function YouTubeSidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-14 bottom-0 w-64 bg-background border-r border-border overflow-y-auto transition-transform duration-300 z-40',
+          'fixed left-0 top-14 bottom-0 bg-background border-r border-border overflow-y-auto transition-all duration-300 z-40',
           'lg:relative lg:top-0 lg:translate-x-0',
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          // Mobile: show/hide based on isOpen
+          'lg:w-64',
+          isOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 lg:translate-x-0',
+          // Desktop: collapse based on isCollapsed
+          isCollapsed && 'lg:w-20'
         )}
       >
         <nav className="p-3 space-y-2">
+          {/* Collapse toggle button (desktop only) */}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden lg:flex items-center justify-center w-full px-3 py-2 rounded-lg hover:bg-secondary text-foreground transition-colors mb-2"
+            title={isCollapsed ? '展开' : '折叠'}
+          >
+            <ChevronDown
+              size={20}
+              className={cn(
+                'transition-transform',
+                isCollapsed ? '-rotate-90' : 'rotate-90'
+              )}
+            />
+          </button>
+
           {/* Main menu items */}
           {menuItems.map((item) => (
             <Link key={item.id} href={item.href}>
@@ -57,9 +77,10 @@ export default function YouTubeSidebar({
                   }
                   onClose?.();
                 }}
+                title={isCollapsed ? item.label : undefined}
               >
                 <item.icon size={24} />
-                <span className="text-sm font-medium">{item.label}</span>
+                {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
               </a>
             </Link>
           ))}
@@ -68,7 +89,7 @@ export default function YouTubeSidebar({
           <div className="h-px bg-border my-4" />
 
           {/* Categories section */}
-          {categories.length > 0 && (
+          {categories.length > 0 && !isCollapsed && (
             <div>
               <button
                 onClick={() => setShowCategories(!showCategories)}
