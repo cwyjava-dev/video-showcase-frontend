@@ -112,7 +112,7 @@ export default function AdminTags() {
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button onClick={() => { setEditingId(null); setFormData({ name: '', description: '', color: '#4F46E5' }); }}>
+                <Button variant="default" onClick={() => { setEditingId(null); setFormData({ name: '', description: '', color: '#4F46E5' }); }}>
                   <Plus className="w-4 h-4 mr-2" />
                   新建标签
                 </Button>
@@ -157,7 +157,7 @@ export default function AdminTags() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button type="submit" className="flex-1">
+                    <Button type="submit" variant="default" className="flex-1">
                       {editingId ? '更新' : '创建'}
                     </Button>
                     <Button type="button" variant="outline" className="flex-1" onClick={handleCloseDialog}>
