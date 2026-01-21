@@ -1,33 +1,37 @@
-# Build stage
+# 构建阶段
 FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# 安装 pnpm
+RUN npm install -g pnpm
+
+# 复制 package 文件
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+# 安装所有依赖（包括 devDependencies）
+RUN pnpm install --frozen-lockfile
 
-# Copy source code
+# 复制源代码
 COPY . .
 
-# Build the project
+# 构建应用
 RUN pnpm build
 
-# Production stage
+# 运行阶段 - 使用 Node.js 提供静态文件
 FROM node:22-alpine
 
 WORKDIR /app
 
-# Install simple HTTP server
-RUN npm install -g http-server
+# 安装 serve（用于提供静态文件）
+RUN npm install -g serve
 
-# Copy built files from builder
+# 从构建阶段复制构建产物
 COPY --from=builder /app/dist ./dist
 
-# Expose port
+# 暴露端口
 EXPOSE 3003
 
-# Start the HTTP server to serve the built files
-CMD ["http-server", "dist", "-p", "3003"]
+# 启动应用 - 使用 serve 提供静态文件
+# serve 会自动处理 SPA 路由，将所有请求重定向到 index.html
+CMD ["serve", "-s", "dist", "-l", "3003"]
