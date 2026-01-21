@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
-import { Home, Compass, Clock, ThumbsUp, ChevronDown } from 'lucide-react';
+import { Home, Compass, Clock, ThumbsUp, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface YouTubeSidebarProps {
@@ -55,15 +55,14 @@ export default function YouTubeSidebar({
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="hidden lg:flex items-center justify-center w-full px-3 py-2 rounded-lg hover:bg-secondary text-foreground transition-colors mb-2"
-            title={isCollapsed ? '展开' : '折叠'}
+            aria-label={isCollapsed ? 'Toggle menu' : 'Toggle menu'}
+            aria-expanded={!isCollapsed}
           >
-            <ChevronDown
-              size={20}
-              className={cn(
-                'transition-transform',
-                isCollapsed ? '-rotate-90' : 'rotate-90'
-              )}
-            />
+            {isCollapsed ? (
+              <Menu size={24} />
+            ) : (
+              <X size={24} />
+            )}
           </button>
 
           {/* Main menu items */}
@@ -94,15 +93,20 @@ export default function YouTubeSidebar({
               <button
                 onClick={() => setShowCategories(!showCategories)}
                 className="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-secondary text-foreground transition-colors"
+                aria-expanded={showCategories}
               >
                 <span className="text-sm font-medium">分类</span>
-                <ChevronDown
-                  size={18}
+                <svg
                   className={cn(
-                    'transition-transform',
+                    'w-4 h-4 transition-transform',
                     showCategories && 'rotate-180'
                   )}
-                />
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
               </button>
 
               {showCategories && (
