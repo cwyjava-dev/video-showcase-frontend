@@ -26,8 +26,15 @@ const getBrowserLanguage = () => {
 
 // 从 localStorage 获取保存的语言，或使用浏览器语言
 const getSavedLanguage = () => {
-  const saved = localStorage.getItem('language');
-  return saved || getBrowserLanguage();
+  try {
+    const saved = localStorage.getItem('language');
+    if (saved && ['zh', 'en', 'ko'].includes(saved)) {
+      return saved;
+    }
+  } catch (e) {
+    console.warn('Failed to access localStorage:', e);
+  }
+  return getBrowserLanguage();
 };
 
 i18n
@@ -36,9 +43,23 @@ i18n
     resources,
     lng: getSavedLanguage(),
     fallbackLng: 'en',
+    ns: ['translation'],
+    defaultNS: 'translation',
     interpolation: {
       escapeValue: false,
     },
+    react: {
+      useSuspense: false,
+    },
   });
+
+// 监听语言变化，保存到 localStorage
+i18n.on('languageChanged', (lng) => {
+  try {
+    localStorage.setItem('language', lng);
+  } catch (e) {
+    console.warn('Failed to save language to localStorage:', e);
+  }
+});
 
 export default i18n;
