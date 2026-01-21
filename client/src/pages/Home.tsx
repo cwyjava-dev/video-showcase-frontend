@@ -27,11 +27,29 @@ export default function Home() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [videosLoading, setVideosLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // 根据窗口宽度计算网格列数
+  const getGridColumns = () => {
+    if (windowWidth < 600) return 1;
+    if (windowWidth < 980) return 2;
+    if (windowWidth < 2000) return 3;
+    return 4;
+  };
 
   // 加载分类
   useEffect(() => {
@@ -135,9 +153,12 @@ export default function Home() {
                 </div>
               </div>
             ) : videos.length > 0 ? (
-              <div className="grid gap-4 auto-fit" style={{
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              }}>
+              <div 
+                className="grid gap-4"
+                style={{
+                  gridTemplateColumns: `repeat(${getGridColumns()}, 1fr)`,
+                }}
+              >
                 {videos.map((video) => (
                   <YouTubeVideoCard
                     key={video.id}
