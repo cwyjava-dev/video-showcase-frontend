@@ -27,7 +27,7 @@ WORKDIR /app
 RUN npm install -g serve
 
 # 从构建阶段复制构建产物
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/dist/public ./dist
 
 # 暴露端口
 EXPOSE 3003
