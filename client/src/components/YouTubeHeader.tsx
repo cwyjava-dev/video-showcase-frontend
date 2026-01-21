@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { getLoginUrl } from '@/const';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 interface YouTubeHeaderProps {
   onMenuClick?: () => void;
@@ -13,6 +15,7 @@ interface YouTubeHeaderProps {
 
 export default function YouTubeHeader({ onMenuClick, onSearch }: YouTubeHeaderProps) {
   const { user, isAuthenticated, logout } = useAuth();
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -64,6 +67,7 @@ export default function YouTubeHeader({ onMenuClick, onSearch }: YouTubeHeaderPr
 
         {/* Right: User Menu */}
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           {isAuthenticated && user ? (
             <div className="relative">
               <button
@@ -84,7 +88,7 @@ export default function YouTubeHeader({ onMenuClick, onSearch }: YouTubeHeaderPr
                     <Link href="/admin">
                       <a className="flex items-center gap-3 px-4 py-2 hover:bg-secondary text-foreground transition-colors">
                         <Settings size={18} />
-                        <span>管理后台</span>
+                        <span>{t('admin.dashboard')}</span>
                       </a>
                     </Link>
                   )}
@@ -97,7 +101,7 @@ export default function YouTubeHeader({ onMenuClick, onSearch }: YouTubeHeaderPr
                     className="w-full flex items-center gap-3 px-4 py-2 hover:bg-secondary text-foreground transition-colors border-t border-border"
                   >
                     <LogOut size={18} />
-                    <span>登出</span>
+                    <span>{t('common.logout')}</span>
                   </button>
                 </div>
               )}
@@ -106,7 +110,7 @@ export default function YouTubeHeader({ onMenuClick, onSearch }: YouTubeHeaderPr
             <Link href={getLoginUrl()}>
               <a>
                 <Button className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full px-6">
-                  登录
+                  {t('common.login')}
                 </Button>
               </a>
             </Link>

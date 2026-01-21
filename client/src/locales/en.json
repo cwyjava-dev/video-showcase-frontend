@@ -1,0 +1,80 @@
+{
+  "common": {
+    "search": "Search",
+    "loading": "Loading...",
+    "noData": "No data",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "save": "Save",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "navigation": {
+    "home": "Home",
+    "explore": "Explore",
+    "history": "History",
+    "liked": "Recommended Videos",
+    "admin": "Admin"
+  },
+  "home": {
+    "title": "Video Showcase Platform",
+    "noVideos": "No videos found",
+    "trySearch": "Try different search terms or browse other categories"
+  },
+  "video": {
+    "title": "Video Title",
+    "description": "Video Description",
+    "category": "Category",
+    "tags": "Tags",
+    "views": "Views",
+    "likes": "Likes",
+    "comments": "Comments",
+    "share": "Share",
+    "recommended": "Recommended Videos",
+    "uploadVideo": "Upload Video",
+    "videoUrl": "Video URL",
+    "videoFile": "Video File",
+    "or": "or",
+    "selectFile": "Select File"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "categories": "Categories",
+    "tags": "Tags",
+    "users": "Users",
+    "videos": "Videos",
+    "newCategory": "New Category",
+    "newTag": "New Tag",
+    "newUser": "New User",
+    "newVideo": "New Video",
+    "categoryName": "Category Name",
+    "tagName": "Tag Name",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "admin": "Admin",
+    "user": "User",
+    "description": "Description",
+    "color": "Color",
+    "actions": "Actions",
+    "confirmDelete": "Are you sure you want to delete?",
+    "deleteSuccess": "Deleted successfully",
+    "saveSucess": "Saved successfully",
+    "editPassword": "Edit Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password"
+  },
+  "language": {
+    "chinese": "中文",
+    "english": "English",
+    "korean": "한국어"
+  }
+}
