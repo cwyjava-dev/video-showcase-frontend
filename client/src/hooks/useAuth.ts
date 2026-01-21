@@ -34,14 +34,15 @@ export function useAuth() {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const token = localStorage.getItem('token');
+        // 使用 AccessToken 代替旧的 token
+        const accessToken = localStorage.getItem('accessToken');
         const userStr = localStorage.getItem('user');
 
-        if (token && userStr) {
+        if (accessToken && userStr) {
           const user = JSON.parse(userStr);
           setState({
             user,
-            token,
+            token: accessToken,
             isLoading: false,
             error: null,
           });

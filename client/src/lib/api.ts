@@ -38,25 +38,49 @@ class ApiService {
     // 请求拦截器 - 添加 JWT Token
     this.api.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
         }
+        // 含体应用 Cookie（包括 RefreshToken）
+        config.withCredentials = true;
         return config;
       },
       (error) => Promise.reject(error)
     );
 
-    // 响应拦截器 - 处理错误
+    // 响应拦截器 - 处理错误和自动刷新 Token
     this.api.interceptors.response.use(
       (response) => response,
-      (error) => {
-        if (error.response?.status === 401) {
-          // Token 过期，清除本地存储并重定向到登录
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          window.location.href = '/login';
+      async (error) => {
+        const originalRequest = error.config;
+
+        // 如果是 401 错误且还没有重试过
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          try {
+            // 调用刷新 Token 接口
+            const refreshResponse = await this.api.post('/auth/refresh');
+            const newAccessToken = refreshResponse.data.token;
+
+            // 保存新的 AccessToken
+            localStorage.setItem('accessToken', newAccessToken);
+
+            // 更新请求头
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+            // 重试原请求
+            return this.api(originalRequest);
+          } catch (refreshError) {
+            // 刷新失败，跳转到登录页
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+            return Promise.reject(refreshError);
+          }
         }
+
         return Promise.reject(error);
       }
     );
@@ -74,7 +98,9 @@ class ApiService {
         password,
       });
       const { token, user } = response.data;
-      localStorage.setItem('token', token);
+      // 保存 AccessToken 到 localStorage
+      localStorage.setItem('accessToken', token);
+      // RefreshToken 自动保存到 Cookie 中（后端设置）
       localStorage.setItem('user', JSON.stringify(user));
       return {
         success: true,
@@ -112,9 +138,25 @@ class ApiService {
    * 用户登出
    */
   async logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
     return this.api.post('/auth/logout');
+  }
+
+  /**
+   * 刷新 Token
+   */
+  async refreshToken() {
+    try {
+      const response = await this.api.post('/auth/refresh');
+      const { token } = response.data;
+      localStorage.setItem('accessToken', token);
+      return response.data;
+    } catch (error) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      throw error;
+    }
   }
 
   // ==================== 视频相关 ====================

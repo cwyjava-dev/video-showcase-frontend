@@ -127,3 +127,10 @@
 
 ## 视频编辑问题
 - [x] 修复更新视频时 user_id 为 null 的问题
+
+## 安全改进 - 双 Token 方案
+- [x] 修改后端认证接口，返回 AccessToken + RefreshToken
+- [x] 实现后端 Token 刷新接口
+- [x] 修改前端 Token 存储（localStorage + HttpOnly Cookie）
+- [x] 修改前端请求拦截器，支持自动刷新
+- [ ] 测试双 Token 方案

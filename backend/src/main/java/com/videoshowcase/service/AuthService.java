@@ -66,4 +66,23 @@ public class AuthService {
             .orElseThrow(() -> new RuntimeException("用户不存在"));
         return UserDto.fromEntity(user);
     }
+
+    public AuthResponse refreshToken(String refreshToken) {
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new RuntimeException("RefreshToken 无效");
+        }
+
+        String userId = jwtTokenProvider.getUserIdFromToken(refreshToken);
+        User user = userRepository.findById(Long.parseLong(userId))
+            .orElseThrow(() -> new RuntimeException("用户不存在"));
+
+        String newAccessToken = jwtTokenProvider.generateToken(String.valueOf(user.getId()), user.getUsername());
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(String.valueOf(user.getId()));
+
+        return AuthResponse.builder()
+            .token(newAccessToken)
+            .refreshToken(newRefreshToken)
+            .user(UserDto.fromEntity(user))
+            .build();
+    }
 }
