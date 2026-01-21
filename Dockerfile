@@ -20,19 +20,14 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm
+# Install simple HTTP server
+RUN npm install -g http-server
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/pnpm-lock.yaml ./
-
-# Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
 
 # Expose port
 EXPOSE 3003
 
-# Start the application
-CMD ["pnpm", "preview"]
+# Start the HTTP server to serve the built files
+CMD ["http-server", "dist", "-p", "3003"]
