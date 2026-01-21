@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit2, Trash2, ArrowLeft, Upload } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowLeft, Upload, Link as LinkIcon } from 'lucide-react';
 import { Link } from 'wouter';
 import { apiService } from '@/lib/api';
 
@@ -50,7 +50,6 @@ export default function AdminVideos() {
     try {
       setLoading(true);
       const response = await apiService.getVideos();
-      // 处理两种响应格式：数组或分页对象
       setVideos(Array.isArray(response) ? response : (response.content || []));
     } catch (error) {
       console.error('获取视频列表失败:', error);
@@ -78,6 +77,11 @@ export default function AdminVideos() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      if (!editingId && !formData.videoFile && !formData.videoUrl) {
+        alert('请上传视频文件或输入视频链接');
+        return;
+      }
+
       if (editingId) {
         await apiService.updateVideo(editingId, {
           title: formData.title,
@@ -85,16 +89,13 @@ export default function AdminVideos() {
           categoryId: formData.categoryId ? parseInt(formData.categoryId) : undefined,
         });
       } else {
-        // 创建新视频
         let videoUrl = formData.videoUrl;
         
-        // 如果选择了文件，上传文件
         if (formData.videoFile) {
           const uploadFormData = new FormData();
           uploadFormData.append('file', formData.videoFile);
           
           try {
-            // 调用后端文件上传接口
             const uploadResponse = await apiService.uploadVideo(uploadFormData);
             if (uploadResponse.success) {
               videoUrl = uploadResponse.url;
@@ -214,39 +215,60 @@ export default function AdminVideos() {
                   </div>
                   {!editingId && (
                     <>
-                      <div>
-                        <label className="text-sm font-medium">视频文件 *</label>
-                        <div className="flex items-center gap-2">
+                      <div className="space-y-3 border border-border rounded-lg p-3 bg-secondary/30">
+                        <p className="text-sm font-medium text-foreground">视频源 (二选一)</p>
+                        
+                        <div>
+                          <label className="text-sm font-medium flex items-center gap-2">
+                            <Upload className="w-4 h-4" />
+                            方式 1: 上传视频文件
+                          </label>
                           <Input
                             type="file"
                             accept="video/*"
                             onChange={handleFileChange}
                             placeholder="选择视频文件"
-                            required={!formData.videoUrl}
+                            className="mt-1"
                           />
-                          <Upload className="w-4 h-4 text-muted-foreground" />
+                          {formData.videoFile && (
+                            <p className="text-xs text-accent mt-1">
+                              ✓ 已选择: {formData.videoFile.name}
+                            </p>
+                          )}
                         </div>
-                        {formData.videoFile && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            已选择: {formData.videoFile.name}
-                          </p>
+
+                        {uploadProgress > 0 && uploadProgress < 100 && (
+                          <div className="w-full bg-secondary rounded-full h-2">
+                            <div
+                              className="bg-primary h-2 rounded-full transition-all"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
                         )}
-                      </div>
-                      {uploadProgress > 0 && uploadProgress < 100 && (
-                        <div className="w-full bg-secondary rounded-full h-2">
-                          <div
-                            className="bg-primary h-2 rounded-full transition-all"
-                            style={{ width: `${uploadProgress}%` }}
-                          />
+
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-px bg-border"></div>
+                          <span className="text-xs text-muted-foreground">或</span>
+                          <div className="flex-1 h-px bg-border"></div>
                         </div>
-                      )}
-                      <div>
-                        <label className="text-sm font-medium">或输入视频链接</label>
-                        <Input
-                          value={formData.videoUrl}
-                          onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                          placeholder="输入视频链接（可选）"
-                        />
+
+                        <div>
+                          <label className="text-sm font-medium flex items-center gap-2">
+                            <LinkIcon className="w-4 h-4" />
+                            方式 2: 输入视频链接
+                          </label>
+                          <Input
+                            value={formData.videoUrl}
+                            onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                            placeholder="输入视频 URL (HTTP/HTTPS)"
+                            className="mt-1"
+                          />
+                          {formData.videoUrl && (
+                            <p className="text-xs text-accent mt-1">
+                              ✓ 已输入链接
+                            </p>
+                          )}
+                        </div>
                       </div>
                       <div>
                         <label className="text-sm font-medium">缩略图链接</label>
