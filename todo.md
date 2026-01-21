@@ -263,3 +263,11 @@
 - [x] 更新Home页面文本为i18n翻译
 - [x] 更新VideoDetail页面文本为i18n翻译
 - [x] 测试全面多语言功能
+
+
+## 完整多语言翻译 - 管理后台和视频详情页
+- [ ] 更新 AdminCategories、AdminTags、AdminUsers、AdminVideos 页面的所有文本
+- [ ] 更新 Home 页面的所有文本
+- [ ] 更新 VideoDetail 页面的所有文本
+- [ ] 更新翻译文件（中文、英文、韩语）
+- [ ] 测试所有页面的多语言功能
