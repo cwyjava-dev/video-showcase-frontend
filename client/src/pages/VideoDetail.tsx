@@ -105,13 +105,22 @@ export default function VideoDetail() {
     );
   }
 
+  const handleMenuToggle = () => {
+    // 在桌面版本上切换折叠状态，在移动版本上切换打开状态
+    if (window.innerWidth >= 1024) {
+      setSidebarCollapsed(!sidebarCollapsed);
+    } else {
+      setSidebarOpen(!sidebarOpen);
+    }
+  };
+
   const handleRelatedVideoClick = (relatedVideoId: number) => {
     navigate(`/video/${relatedVideoId}`);
   };
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
-      <YouTubeHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      <YouTubeHeader onMenuClick={handleMenuToggle} />
 
       <div className="flex flex-1 overflow-hidden">
         <YouTubeSidebar
@@ -126,17 +135,17 @@ export default function VideoDetail() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Main video section */}
               <div className="lg:col-span-2 space-y-4">
-                {/* Video player - 自适应大小 */}
-                <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                {/* Video player - 自適应大小 */}
+                <div className="w-full bg-black rounded-lg overflow-hidden">
                   {video.videoUrl ? (
                     <video
                       src={video.videoUrl}
                       controls
-                      className="absolute top-0 left-0 w-full h-full"
+                      className="w-full h-auto"
                       autoPlay
                     />
                   ) : (
-                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                    <div className="w-full aspect-video flex items-center justify-center bg-black rounded-lg">
                       <p className="text-muted-foreground">视频不可用</p>
                     </div>
                   )}
