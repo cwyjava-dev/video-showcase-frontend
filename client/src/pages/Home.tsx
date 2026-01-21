@@ -31,7 +31,8 @@ export default function Home() {
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [videosLoading, setVideosLoading] = useState(true); // 初始化为 true，首次加载时显示加载态
+  const [videosLoading, setVideosLoading] = useState(false); // 初始化为 false，不显示加载动画
+  const [showLoadingSpinner, setShowLoadingSpinner] = useState(false); // 延迟显示加载动画
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   // 监听窗口大小变化
@@ -66,9 +67,17 @@ export default function Home() {
     loadCategories();
   }, []);
 
-  // 加载视频列表（带防抖）
+  // 加载视频列表（带防抖和延迟加载动画）
   useEffect(() => {
-    setVideosLoading(true); // 立即设置加载状态，避免显示"没有找到视频"
+    setVideosLoading(true); // 标记为加载中
+    setShowLoadingSpinner(false); // 先不显示加载动画
+    
+    // 延迟 1 秒后才显示加载动画
+    const spinnerTimer = setTimeout(() => {
+      setShowLoadingSpinner(true);
+    }, 1000);
+
+    // 防抖延迟
     const timer = setTimeout(() => {
       const loadVideos = async () => {
         try {
@@ -82,12 +91,16 @@ export default function Home() {
           setVideos([]);
         } finally {
           setVideosLoading(false);
+          setShowLoadingSpinner(false); // 加载完成，隐藏加载动画
         }
       };
       loadVideos();
-    }, 300); // 减少防抖延迟到 300ms，提高响应速度
+    }, 300); // 防抖延迟 300ms
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(spinnerTimer);
+    };
   }, [searchQuery, selectedCategory]);
 
   const handleSearch = (query: string) => {
@@ -143,14 +156,21 @@ export default function Home() {
             )}
 
             {/* Videos grid */}
-            {videosLoading && videos.length === 0 ? (
+            {showLoadingSpinner ? (
+              // 显示加载动画（仅当加载时间超过 1 秒）
               <div className="flex items-center justify-center h-96">
                 <div className="flex flex-col items-center gap-4">
                   <Loader2 size={48} className="animate-spin text-accent" />
                   <p className="text-muted-foreground">加载中...</p>
                 </div>
               </div>
+            ) : videosLoading ? (
+              // 加载中但不显示加载动画（1 秒内快速返回）
+              <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${getGridColumns()}, 1fr)` }}>
+                {/* 空占位符，等待数据返回 */}
+              </div>
             ) : videos.length > 0 ? (
+              // 显示视频列表
               <div 
                 className="grid gap-4"
                 style={{
@@ -171,6 +191,7 @@ export default function Home() {
                 ))}
               </div>
             ) : (
+              // 显示"没有找到视频"
               <div className="flex items-center justify-center h-96">
                 <div className="text-center">
                   <p className="text-lg text-muted-foreground">没有找到视频</p>
