@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { Home, Compass, Clock, ThumbsUp, ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 interface YouTubeSidebarProps {
@@ -20,13 +21,14 @@ export default function YouTubeSidebar({
   categories = [],
   onCategorySelect,
 }: YouTubeSidebarProps) {
+  const { t } = useTranslation();
   const [showCategories, setShowCategories] = useState(true); // 初始为展开状态
 
   const menuItems = [
-    { icon: Home, label: '首页', href: '/', id: 'home' },
-    { icon: Compass, label: '探索', href: '#', id: 'explore' },
-    { icon: Clock, label: '历史记录', href: '#', id: 'history' },
-    { icon: ThumbsUp, label: '顶过的视频', href: '#', id: 'liked' },
+    { icon: Home, label: t('navigation.home'), href: '/', id: 'home' },
+    { icon: Compass, label: t('navigation.explore'), href: '#', id: 'explore' },
+    { icon: Clock, label: t('navigation.history'), href: '#', id: 'history' },
+    { icon: ThumbsUp, label: t('navigation.liked'), href: '#', id: 'liked' },
   ];
 
   return (
@@ -82,7 +84,7 @@ export default function YouTubeSidebar({
                 className="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-secondary text-foreground transition-colors"
                 aria-expanded={showCategories}
               >
-                <span className="text-sm font-medium">分类</span>
+                <span className="text-sm font-medium">{t('video.category')}</span>
                 <ChevronDown
                   size={18}
                   className={cn(

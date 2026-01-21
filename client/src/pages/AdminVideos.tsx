@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -26,6 +27,7 @@ interface Category {
 }
 
 export default function AdminVideos() {
+  const { t } = useTranslation();
   const [videos, setVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +80,7 @@ export default function AdminVideos() {
     e.preventDefault();
     try {
       if (!editingId && !formData.videoFile && !formData.videoUrl) {
-        alert('请上传视频文件或输入视频链接');
+        alert(t('admin.selectVideoSource'));
         return;
       }
 
@@ -101,11 +103,11 @@ export default function AdminVideos() {
               videoUrl = uploadResponse.url;
               setUploadProgress(100);
             } else {
-              throw new Error(uploadResponse.message || '上传失败');
+              throw new Error(uploadResponse.message || t('admin.uploadFailed'));
             }
           } catch (error) {
             console.error('上传视频文件失败:', error);
-            alert('上传视频文件失败，请检查文件大小或格式');
+            alert(t('admin.uploadFileFailed'));
             return;
           }
         }
@@ -124,10 +126,10 @@ export default function AdminVideos() {
       setIsOpen(false);
       setUploadProgress(0);
       fetchVideos();
-      alert('保存成功');
+      alert(t('admin.saveSucess'));
     } catch (error) {
       console.error('保存视频失败:', error);
-      alert('保存视频失败，请重试');
+      alert(t('admin.saveFailed'));
     }
   };
 
@@ -145,14 +147,14 @@ export default function AdminVideos() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm('确定要删除这个视频吗？')) {
+    if (confirm(t('admin.confirmDelete'))) {
       try {
         await apiService.deleteVideo(id);
         fetchVideos();
-        alert('删除成功');
+        alert(t('admin.deleteSuccess'));
       } catch (error) {
         console.error('删除视频失败:', error);
-        alert('删除失败，请重试');
+        alert(t('admin.deleteFailed'));
       }
     }
   };
@@ -181,58 +183,58 @@ export default function AdminVideos() {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-              <h1 className="text-2xl font-bold">视频管理</h1>
+              <h1 className="text-2xl font-bold">{t('admin.videos')}</h1>
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
                 <Button onClick={() => { setEditingId(null); setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', videoFile: null }); }}>
                   <Plus className="w-4 h-4 mr-2" />
-                  上传视频
+                  {t('admin.newVideo')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>{editingId ? '编辑视频' : '上传新视频'}</DialogTitle>
+                  <DialogTitle>{editingId ? t('common.edit') : t('admin.uploadVideo')}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium">视频标题 *</label>
+                    <label className="text-sm font-medium">{t('video.title')} *</label>
                     <Input
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      placeholder="输入视频标题"
+                      placeholder={t('video.title')}
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">描述</label>
+                    <label className="text-sm font-medium">{t('admin.description')}</label>
                     <Textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      placeholder="输入视频描述"
+                      placeholder={t('admin.description')}
                       rows={3}
                     />
                   </div>
                   {!editingId && (
                     <>
                       <div className="space-y-3 border border-border rounded-lg p-3 bg-secondary/30">
-                        <p className="text-sm font-medium text-foreground">视频源 (二选一)</p>
+                        <p className="text-sm font-medium text-foreground">{t('admin.videoSource')}</p>
                         
                         <div>
                           <label className="text-sm font-medium flex items-center gap-2">
                             <Upload className="w-4 h-4" />
-                            方式 1: 上传视频文件
+                            {t('admin.uploadMethod')}
                           </label>
                           <Input
                             type="file"
                             accept="video/*"
                             onChange={handleFileChange}
-                            placeholder="选择视频文件"
+                            placeholder={t('video.selectFile')}
                             className="mt-1"
                           />
                           {formData.videoFile && (
                             <p className="text-xs text-accent mt-1">
-                              ✓ 已选择: {formData.videoFile.name}
+                              ✓ {t('admin.selected')}: {formData.videoFile.name}
                             </p>
                           )}
                         </div>
@@ -248,46 +250,46 @@ export default function AdminVideos() {
 
                         <div className="flex items-center gap-2">
                           <div className="flex-1 h-px bg-border"></div>
-                          <span className="text-xs text-muted-foreground">或</span>
+                          <span className="text-xs text-muted-foreground">{t('video.or')}</span>
                           <div className="flex-1 h-px bg-border"></div>
                         </div>
 
                         <div>
                           <label className="text-sm font-medium flex items-center gap-2">
                             <LinkIcon className="w-4 h-4" />
-                            方式 2: 输入视频链接
+                            {t('admin.linkMethod')}
                           </label>
                           <Input
                             value={formData.videoUrl}
                             onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                            placeholder="输入视频 URL (HTTP/HTTPS)"
+                            placeholder={t('video.videoUrl')}
                             className="mt-1"
                           />
                           {formData.videoUrl && (
                             <p className="text-xs text-accent mt-1">
-                              ✓ 已输入链接
+                              ✓ {t('admin.linkEntered')}
                             </p>
                           )}
                         </div>
                       </div>
                       <div>
-                        <label className="text-sm font-medium">缩略图链接</label>
+                        <label className="text-sm font-medium">{t('admin.thumbnail')}</label>
                         <Input
                           value={formData.thumbnailUrl}
                           onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
-                          placeholder="输入缩略图链接"
+                          placeholder={t('admin.thumbnailUrl')}
                         />
                       </div>
                     </>
                   )}
                   <div>
-                    <label className="text-sm font-medium">分类</label>
+                    <label className="text-sm font-medium">{t('video.category')}</label>
                     <select
                       value={formData.categoryId}
                       onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
                     >
-                      <option value="">-- 选择分类 --</option>
+                      <option value="">-- {t('admin.selectCategory')} --</option>
                       {categories.map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
@@ -296,11 +298,11 @@ export default function AdminVideos() {
                     </select>
                   </div>
                   <div className="flex gap-2">
-                    <Button type="submit" className="flex-1">
-                      {editingId ? '更新' : '上传'}
+                    <Button type="submit" variant="default" className="flex-1">
+                      {t('common.save')}
                     </Button>
                     <Button type="button" variant="outline" className="flex-1" onClick={handleCloseDialog}>
-                      取消
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 </form>
@@ -310,66 +312,64 @@ export default function AdminVideos() {
         </div>
       </header>
 
-      <div className="container py-8 px-4 lg:px-8">
-        <Card className="border-border/50 w-full">
-          <CardHeader>
-            <CardTitle>视频列表</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">加载中...</p>
-              </div>
-            ) : videos.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">暂无视频</p>
-              </div>
-            ) : (
+      <main className="container py-8">
+        {loading ? (
+          <div className="text-center text-muted-foreground">{t('common.loading')}</div>
+        ) : videos.length === 0 ? (
+          <Card>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              {t('common.noData')}
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('admin.videos')}</CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>标题</TableHead>
-                      <TableHead>描述</TableHead>
-                      <TableHead>分类</TableHead>
-                      <TableHead>观看次数</TableHead>
-                      <TableHead>创建时间</TableHead>
-                      <TableHead>操作</TableHead>
+                      <TableHead>{t('video.title')}</TableHead>
+                      <TableHead>{t('video.category')}</TableHead>
+                      <TableHead>{t('video.views')}</TableHead>
+                      <TableHead>{t('admin.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {videos.map((video) => (
                       <TableRow key={video.id}>
-                        <TableCell className="font-medium">{video.title}</TableCell>
-                        <TableCell className="max-w-xs truncate">{video.description || '-'}</TableCell>
+                        <TableCell>{video.title}</TableCell>
                         <TableCell>{getCategoryName(video.categoryId)}</TableCell>
                         <TableCell>{video.views}</TableCell>
-                        <TableCell>{new Date(video.createdAt).toLocaleDateString()}</TableCell>
-                        <TableCell className="space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEdit(video)}
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDelete(video.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(video)}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(video.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        )}
+      </main>
     </div>
   );
 }
