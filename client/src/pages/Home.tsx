@@ -108,7 +108,7 @@ export default function Home() {
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="p-6 max-w-7xl mx-auto">
+          <div className="w-full h-full px-4 py-6 sm:px-6 lg:px-8">
             {/* Page title */}
             {searchQuery && (
               <div className="mb-6">
@@ -135,7 +135,9 @@ export default function Home() {
                 </div>
               </div>
             ) : videos.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid gap-4 auto-fit" style={{
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              }}>
                 {videos.map((video) => (
                   <YouTubeVideoCard
                     key={video.id}
