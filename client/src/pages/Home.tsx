@@ -31,7 +31,7 @@ export default function Home() {
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [videosLoading, setVideosLoading] = useState(false);
+  const [videosLoading, setVideosLoading] = useState(true); // 初始化为 true，首次加载时显示加载态
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   // 监听窗口大小变化
@@ -68,11 +68,9 @@ export default function Home() {
 
   // 加载视频列表（带防抖）
   useEffect(() => {
+    setVideosLoading(true); // 立即设置加载状态，避免显示"没有找到视频"
     const timer = setTimeout(() => {
       const loadVideos = async () => {
-        if (videos.length === 0) {
-          setVideosLoading(true);
-        }
         try {
           const data = await apiService.getVideos({
             categoryId: selectedCategory,
@@ -87,7 +85,7 @@ export default function Home() {
         }
       };
       loadVideos();
-    }, 500);
+    }, 300); // 减少防抖延迟到 300ms，提高响应速度
 
     return () => clearTimeout(timer);
   }, [searchQuery, selectedCategory]);
