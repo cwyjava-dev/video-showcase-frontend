@@ -31,8 +31,7 @@ export default function Home() {
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [videosLoading, setVideosLoading] = useState(false); // 初始化为 false，不显示加载动画
-  const [showLoadingSpinner, setShowLoadingSpinner] = useState(false); // 延迟显示加载动画
+  const [isLoading, setIsLoading] = useState(true); // 简化为单一的加载状态
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   // 监听窗口大小变化
@@ -67,15 +66,9 @@ export default function Home() {
     loadCategories();
   }, []);
 
-  // 加载视频列表（带防抖和延迟加载动画）
+  // 加载视频列表（带防抖）
   useEffect(() => {
-    setVideosLoading(true); // 标记为加载中
-    setShowLoadingSpinner(false); // 先不显示加载动画
-    
-    // 延迟 1 秒后才显示加载动画
-    const spinnerTimer = setTimeout(() => {
-      setShowLoadingSpinner(true);
-    }, 1000);
+    setIsLoading(true); // 立即设置为加载中
 
     // 防抖延迟
     const timer = setTimeout(() => {
@@ -90,8 +83,7 @@ export default function Home() {
           console.error("加载视频失败:", error);
           setVideos([]);
         } finally {
-          setVideosLoading(false);
-          setShowLoadingSpinner(false); // 加载完成，隐藏加载动画
+          setIsLoading(false); // 加载完成，设置为不加载
         }
       };
       loadVideos();
@@ -99,7 +91,6 @@ export default function Home() {
 
     return () => {
       clearTimeout(timer);
-      clearTimeout(spinnerTimer);
     };
   }, [searchQuery, selectedCategory]);
 
@@ -156,18 +147,13 @@ export default function Home() {
             )}
 
             {/* Videos grid */}
-            {showLoadingSpinner ? (
-              // 显示加载动画（仅当加载时间超过 1 秒）
+            {isLoading && videos.length === 0 ? (
+              // 加载中且没有数据，显示加载动画
               <div className="flex items-center justify-center h-96">
                 <div className="flex flex-col items-center gap-4">
                   <Loader2 size={48} className="animate-spin text-accent" />
                   <p className="text-muted-foreground">加载中...</p>
                 </div>
-              </div>
-            ) : videosLoading ? (
-              // 加载中但不显示加载动画（1 秒内快速返回）
-              <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${getGridColumns()}, 1fr)` }}>
-                {/* 空占位符，等待数据返回 */}
               </div>
             ) : videos.length > 0 ? (
               // 显示视频列表
