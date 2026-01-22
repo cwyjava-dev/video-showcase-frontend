@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Film, ArrowLeft, Video, FolderOpen, Tag, Users } from "lucide-react";
@@ -7,6 +8,7 @@ import { useEffect, useState } from "react";
 import { apiService } from "@/lib/api";
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const { user, isAuthenticated, isLoading } = useAuth();
   const [stats, setStats] = useState({
@@ -53,7 +55,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-gradient-dark flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">加载中...</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -79,7 +81,7 @@ export default function AdminDashboard() {
                 <div className="w-10 h-10 rounded-xl bg-gradient-gold flex items-center justify-center">
                   <Film className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <h1 className="text-2xl font-bold">管理后台</h1>
+                <h1 className="text-2xl font-bold">{t('admin.dashboard')}</h1>
               </div>
             </div>
           </div>
@@ -95,15 +97,15 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-lg">
                   <Film className="w-6 h-6" />
-                  视频管理
+                  {t('admin.videoManagement')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-6 text-base">
-                  管理视频内容、上传新视频、编辑视频信息
+                  {t('admin.videoManagementDesc')}
                 </p>
                 <Button asChild className="w-full h-10 text-base">
-                  <Link href="/admin/videos">进入视频管理</Link>
+                  <Link href="/admin/videos">{t('admin.enterVideoManagement')}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -113,15 +115,15 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-lg">
                   <FolderOpen className="w-6 h-6" />
-                  分类管理
+                  {t('admin.categoryManagement')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-6 text-base">
-                  创建和管理视频分类，组织内容结构
+                  {t('admin.categoryManagementDesc')}
                 </p>
                 <Button asChild className="w-full h-10 text-base" variant="outline">
-                  <Link href="/admin/categories">进入分类管理</Link>
+                  <Link href="/admin/categories">{t('admin.enterCategoryManagement')}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -131,15 +133,15 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-lg">
                   <Tag className="w-6 h-6" />
-                  标签管理
+                  {t('admin.tagManagement')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-6 text-base">
-                  创建和管理视频标签，方便内容分类
+                  {t('admin.tagManagementDesc')}
                 </p>
                 <Button asChild className="w-full h-10 text-base" variant="outline">
-                  <Link href="/admin/tags">进入标签管理</Link>
+                  <Link href="/admin/tags">{t('admin.enterTagManagement')}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -149,15 +151,15 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-lg">
                   <Users className="w-6 h-6" />
-                  用户管理
+                  {t('admin.userManagement')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-6 text-base">
-                  管理平台用户、权限和账户信息
+                  {t('admin.userManagementDesc')}
                 </p>
                 <Button asChild className="w-full h-10 text-base" variant="outline">
-                  <Link href="/admin/users">进入用户管理</Link>
+                  <Link href="/admin/users">{t('admin.enterUserManagement')}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -166,7 +168,7 @@ export default function AdminDashboard() {
           {/* 快速统计 */}
           <Card className="mt-8 border-border/50">
             <CardHeader>
-              <CardTitle className="text-xl">平台统计</CardTitle>
+              <CardTitle className="text-xl">{t('admin.platformStatistics')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -175,28 +177,28 @@ export default function AdminDashboard() {
                     <Video className="w-8 h-8 text-blue-500" />
                   </div>
                   <div className="text-4xl font-bold text-primary">{stats.videoCount}</div>
-                  <p className="text-base text-muted-foreground mt-3">总视频数</p>
+                  <p className="text-base text-muted-foreground mt-3">{t('admin.totalVideos')}</p>
                 </div>
                 <div className="text-center p-4 bg-background/50 rounded-lg">
                   <div className="flex justify-center mb-3">
                     <Users className="w-8 h-8 text-green-500" />
                   </div>
                   <div className="text-4xl font-bold text-primary">{stats.userCount}</div>
-                  <p className="text-base text-muted-foreground mt-3">总用户数</p>
+                  <p className="text-base text-muted-foreground mt-3">{t('admin.totalUsers')}</p>
                 </div>
                 <div className="text-center p-4 bg-background/50 rounded-lg">
                   <div className="flex justify-center mb-3">
                     <FolderOpen className="w-8 h-8 text-orange-500" />
                   </div>
                   <div className="text-4xl font-bold text-primary">{stats.categoryCount}</div>
-                  <p className="text-base text-muted-foreground mt-3">总分类数</p>
+                  <p className="text-base text-muted-foreground mt-3">{t('admin.totalCategories')}</p>
                 </div>
                 <div className="text-center p-4 bg-background/50 rounded-lg">
                   <div className="flex justify-center mb-3">
                     <Tag className="w-8 h-8 text-purple-500" />
                   </div>
                   <div className="text-4xl font-bold text-primary">{stats.tagCount}</div>
-                  <p className="text-base text-muted-foreground mt-3">总标签数</p>
+                  <p className="text-base text-muted-foreground mt-3">{t('admin.totalTags')}</p>
                 </div>
               </div>
             </CardContent>

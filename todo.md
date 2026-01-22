@@ -279,3 +279,4 @@
 - [x] 修复 AdminTags 页面的多语言翻译
 - [x] 修复 AdminUsers 页面的多语言翻译
 - [x] 修复 AdminDashboard 页面的多语言翻译
+- [x] 为 AdminDashboard 页面中的所有硬编码中文文本添加多语言支持
