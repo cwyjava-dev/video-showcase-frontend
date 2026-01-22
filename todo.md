@@ -266,8 +266,16 @@
 
 
 ## 完整多语言翻译 - 管理后台和视频详情页
-- [ ] 更新 AdminCategories、AdminTags、AdminUsers、AdminVideos 页面的所有文本
-- [ ] 更新 Home 页面的所有文本
-- [ ] 更新 VideoDetail 页面的所有文本
-- [ ] 更新翻译文件（中文、英文、韩语）
-- [ ] 测试所有页面的多语言功能
+- [x] 更新 AdminCategories、AdminTags、AdminUsers、AdminVideos 页面的所有文本
+- [x] 更新 Home 页面的所有文本
+- [x] 更新 VideoDetail 页面的所有文本
+- [x] 更新翻译文件（中文、英文、韩语）
+- [x] 测试所有页面的多语言功能
+
+
+## Bug修复 - 管理后台多语言不工作
+- [x] 修复 AdminVideos 页面的多语言翻译
+- [x] 修复 AdminCategories 页面的多语言翻译
+- [x] 修复 AdminTags 页面的多语言翻译
+- [x] 修复 AdminUsers 页面的多语言翻译
+- [x] 修复 AdminDashboard 页面的多语言翻译

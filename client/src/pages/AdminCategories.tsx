@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ interface Category {
 }
 
 export default function AdminCategories() {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +40,7 @@ export default function AdminCategories() {
       const data = Array.isArray(response) ? response : (response?.data || []);
       setCategories(data);
     } catch (error) {
-      console.error('获取分类列表失败:', error);
+      console.error('Failed to fetch categories:', error);
       setCategories([]);
     } finally {
       setLoading(false);
@@ -66,7 +68,7 @@ export default function AdminCategories() {
       setIsOpen(false);
       fetchCategories();
     } catch (error) {
-      console.error('保存分类失败:', error);
+      console.error('Failed to save category:', error);
     }
   };
 
@@ -81,12 +83,12 @@ export default function AdminCategories() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm('确定要删除这个分类吗？')) {
+    if (confirm(t('admin.confirmDeleteCategory'))) {
       try {
         await apiService.deleteCategory(id);
         fetchCategories();
       } catch (error) {
-        console.error('删除分类失败:', error);
+        console.error('Failed to delete category:', error);
       }
     }
   };
@@ -108,40 +110,40 @@ export default function AdminCategories() {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-              <h1 className="text-2xl font-bold">分类管理</h1>
+              <h1 className="text-2xl font-bold">{t('admin.categories')}</h1>
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
                 <Button variant="default" onClick={() => { setEditingId(null); setFormData({ name: '', description: '', color: '#FF6B6B' }); }}>
                   <Plus className="w-4 h-4 mr-2" />
-                  新建分类
+                  {t('admin.newCategory')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>{editingId ? '编辑分类' : '新建分类'}</DialogTitle>
+                  <DialogTitle>{editingId ? t('admin.editCategory') : t('admin.newCategory')}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium">分类名称 *</label>
+                    <label className="text-sm font-medium">{t('admin.categoryName')} *</label>
                     <Input
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="输入分类名称"
+                      placeholder={t('admin.enterCategoryName')}
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">描述</label>
+                    <label className="text-sm font-medium">{t('admin.description')}</label>
                     <Textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      placeholder="输入分类描述"
+                      placeholder={t('admin.enterDescription')}
                       rows={3}
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">颜色</label>
+                    <label className="text-sm font-medium">{t('admin.color')}</label>
                     <div className="flex gap-2">
                       <Input
                         type="color"
@@ -158,10 +160,10 @@ export default function AdminCategories() {
                   </div>
                   <div className="flex gap-2">
                     <Button type="submit" variant="default" className="flex-1">
-                      {editingId ? '更新' : '创建'}
+                      {editingId ? t('common.update') : t('common.create')}
                     </Button>
                     <Button type="button" variant="outline" className="flex-1" onClick={handleCloseDialog}>
-                      取消
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 </form>
@@ -174,26 +176,26 @@ export default function AdminCategories() {
       <div className="container py-8 px-4 lg:px-8">
         <Card className="border-border/50 w-full">
           <CardHeader>
-            <CardTitle>分类列表</CardTitle>
+            <CardTitle>{t('admin.categoryList')}</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">加载中...</p>
+                <p className="text-muted-foreground">{t('common.loading')}</p>
               </div>
             ) : categories.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">暂无分类</p>
+                <p className="text-muted-foreground">{t('common.noData')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>名称</TableHead>
-                      <TableHead>描述</TableHead>
-                      <TableHead>颜色</TableHead>
-                      <TableHead>操作</TableHead>
+                      <TableHead>{t('admin.name')}</TableHead>
+                      <TableHead>{t('admin.description')}</TableHead>
+                      <TableHead>{t('admin.color')}</TableHead>
+                      <TableHead>{t('admin.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

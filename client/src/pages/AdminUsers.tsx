@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ interface User {
 }
 
 export default function AdminUsers() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -46,8 +48,8 @@ export default function AdminUsers() {
       const response = await apiService.getUsers();
       setUsers(response || []);
     } catch (error) {
-      console.error('获取用户列表失败:', error);
-      alert('获取用户列表失败');
+      console.error('Failed to fetch users:', error);
+      alert(t('admin.fetchUsersFailed'));
     } finally {
       setLoading(false);
     }
@@ -57,7 +59,7 @@ export default function AdminUsers() {
     e.preventDefault();
     try {
       if (!formData.username || !formData.email) {
-        alert('用户名和邮箱不能为空');
+        alert(t('admin.usernameEmailRequired'));
         return;
       }
 
@@ -68,11 +70,11 @@ export default function AdminUsers() {
           displayName: formData.displayName,
           role: formData.role,
         });
-        alert('用户更新成功');
+        alert(t('admin.userUpdateSuccess'));
       } else {
         // 创建新用户
         if (!formData.password) {
-          alert('新建用户必须设置密码');
+          alert(t('admin.passwordRequired'));
           return;
         }
         await apiService.createUser({
@@ -82,7 +84,7 @@ export default function AdminUsers() {
           password: formData.password,
           role: formData.role,
         });
-        alert('用户创建成功');
+        alert(t('admin.userCreateSuccess'));
       }
       
       setFormData({ username: '', email: '', displayName: '', password: '', role: 'USER' });
@@ -90,8 +92,8 @@ export default function AdminUsers() {
       setIsOpen(false);
       fetchUsers();
     } catch (error) {
-      console.error('保存用户失败:', error);
-      alert('保存用户失败，请检查输入');
+      console.error('Failed to save user:', error);
+      alert(t('admin.saveUserFailed'));
     }
   };
 
@@ -108,14 +110,14 @@ export default function AdminUsers() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm('确定要删除这个用户吗？')) {
+    if (confirm(t('admin.confirmDeleteUser'))) {
       try {
         await apiService.deleteUser(id);
         fetchUsers();
-        alert('用户删除成功');
+        alert(t('admin.userDeleteSuccess'));
       } catch (error) {
-        console.error('删除用户失败:', error);
-        alert('删除用户失败');
+        console.error('Failed to delete user:', error);
+        alert(t('admin.deleteUserFailed'));
       }
     }
   };
@@ -124,15 +126,15 @@ export default function AdminUsers() {
     e.preventDefault();
     try {
       if (!passwordData.newPassword || !passwordData.confirmPassword) {
-        alert('新密码不能为空');
+        alert(t('admin.passwordCannotBeEmpty'));
         return;
       }
       if (passwordData.newPassword !== passwordData.confirmPassword) {
-        alert('两次输入的密码不一致');
+        alert(t('admin.passwordMismatch'));
         return;
       }
       if (passwordData.newPassword.length < 6) {
-        alert('密码长度至少为 6 位');
+        alert(t('admin.passwordTooShort'));
         return;
       }
 
@@ -141,7 +143,7 @@ export default function AdminUsers() {
         password: passwordData.newPassword,
       });
       
-      alert('密码修改成功，请重新登录');
+      alert(t('admin.passwordChangeSuccess'));
       setPasswordData({ userId: 0, newPassword: '', confirmPassword: '' });
       setIsPasswordOpen(false);
       // 如果修改的是当前用户的密码，则退出登录
@@ -149,8 +151,8 @@ export default function AdminUsers() {
       window.location.href = '/login';
       fetchUsers();
     } catch (error) {
-      console.error('修改密码失败:', error);
-      alert('修改密码失败');
+      console.error('Failed to change password:', error);
+      alert(t('admin.changePasswordFailed'));
     }
   };
 
@@ -176,77 +178,77 @@ export default function AdminUsers() {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-              <h1 className="text-2xl font-bold">用户管理</h1>
+              <h1 className="text-2xl font-bold">{t('admin.users')}</h1>
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
                 <Button variant="default" onClick={() => { setEditingId(null); setFormData({ username: '', email: '', displayName: '', password: '', role: 'USER' }); }}>
                   <Plus className="w-4 h-4 mr-2" />
-                  新建用户
+                  {t('admin.newUser')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>{editingId ? '编辑用户' : '新建用户'}</DialogTitle>
+                  <DialogTitle>{editingId ? t('admin.editUser') : t('admin.newUser')}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium">用户名 *</label>
+                    <label className="text-sm font-medium">{t('admin.username')} *</label>
                     <Input
                       value={formData.username}
                       onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                      placeholder="输入用户名"
+                      placeholder={t('admin.enterUsername')}
                       required
                       disabled={!!editingId}
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">邮箱 *</label>
+                    <label className="text-sm font-medium">{t('admin.email')} *</label>
                     <Input
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="输入邮箱"
+                      placeholder={t('admin.enterEmail')}
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">显示名称</label>
+                    <label className="text-sm font-medium">{t('admin.displayName')}</label>
                     <Input
                       value={formData.displayName}
                       onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                      placeholder="输入显示名称"
+                      placeholder={t('admin.enterDisplayName')}
                     />
                   </div>
                   {!editingId && (
                     <div>
-                      <label className="text-sm font-medium">密码 *</label>
+                      <label className="text-sm font-medium">{t('admin.password')} *</label>
                       <Input
                         type="password"
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        placeholder="输入密码（至少 6 位）"
+                        placeholder={t('admin.enterPassword')}
                         required
                       />
                     </div>
                   )}
                   <div>
-                    <label className="text-sm font-medium">角色 *</label>
+                    <label className="text-sm font-medium">{t('admin.role')} *</label>
                     <select
                       value={formData.role}
                       onChange={(e) => setFormData({ ...formData, role: e.target.value as 'USER' | 'ADMIN' })}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
                     >
-                      <option value="USER">普通用户</option>
-                      <option value="ADMIN">管理员</option>
+                      <option value="USER">{t('admin.regularUser')}</option>
+                      <option value="ADMIN">{t('admin.administrator')}</option>
                     </select>
                   </div>
                   <div className="flex gap-2">
                     <Button type="submit" variant="default" className="flex-1">
-                      {editingId ? '更新' : '创建'}
+                      {editingId ? t('common.update') : t('common.create')}
                     </Button>
                     <Button type="button" variant="outline" className="flex-1" onClick={handleCloseDialog}>
-                      取消
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 </form>
@@ -260,35 +262,35 @@ export default function AdminUsers() {
       <Dialog open={isPasswordOpen} onOpenChange={setIsPasswordOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>修改密码</DialogTitle>
+            <DialogTitle>{t('admin.changePassword')}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div>
-              <label className="text-sm font-medium">新密码 *</label>
+              <label className="text-sm font-medium">{t('admin.newPassword')} *</label>
               <Input
                 type="password"
                 value={passwordData.newPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                placeholder="输入新密码（至少 6 位）"
+                placeholder={t('admin.enterNewPassword')}
                 required
               />
             </div>
             <div>
-              <label className="text-sm font-medium">确认密码 *</label>
+              <label className="text-sm font-medium">{t('admin.confirmPassword')} *</label>
               <Input
                 type="password"
                 value={passwordData.confirmPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                placeholder="再次输入新密码"
+                placeholder={t('admin.confirmNewPassword')}
                 required
               />
             </div>
             <div className="flex gap-2">
               <Button type="submit" variant="default" className="flex-1">
-                修改
+                {t('admin.change')}
               </Button>
               <Button type="button" variant="outline" className="flex-1" onClick={() => setIsPasswordOpen(false)}>
-                取消
+                {t('common.cancel')}
               </Button>
             </div>
           </form>
@@ -298,28 +300,28 @@ export default function AdminUsers() {
       <div className="container py-8 px-4 lg:px-8">
         <Card className="border-border/50 w-full">
           <CardHeader>
-            <CardTitle>用户列表</CardTitle>
+            <CardTitle>{t('admin.userList')}</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">加载中...</p>
+                <p className="text-muted-foreground">{t('common.loading')}</p>
               </div>
             ) : users.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">暂无用户</p>
+                <p className="text-muted-foreground">{t('common.noData')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>用户名</TableHead>
-                      <TableHead>邮箱</TableHead>
-                      <TableHead>显示名称</TableHead>
-                      <TableHead>角色</TableHead>
-                      <TableHead>创建时间</TableHead>
-                      <TableHead>操作</TableHead>
+                      <TableHead>{t('admin.username')}</TableHead>
+                      <TableHead>{t('admin.email')}</TableHead>
+                      <TableHead>{t('admin.displayName')}</TableHead>
+                      <TableHead>{t('admin.role')}</TableHead>
+                      <TableHead>{t('admin.createdAt')}</TableHead>
+                      <TableHead>{t('admin.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -330,7 +332,7 @@ export default function AdminUsers() {
                         <TableCell>{user.displayName || '-'}</TableCell>
                         <TableCell>
                           <span className={`px-2 py-1 rounded text-sm ${user.role === 'ADMIN' ? 'bg-red-500/20 text-red-500' : 'bg-blue-500/20 text-blue-500'}`}>
-                            {user.role === 'ADMIN' ? '管理员' : '普通用户'}
+                            {user.role === 'ADMIN' ? t('admin.administrator') : t('admin.regularUser')}
                           </span>
                         </TableCell>
                         <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
@@ -346,7 +348,7 @@ export default function AdminUsers() {
                             size="sm"
                             variant="outline"
                             onClick={() => openPasswordDialog(user)}
-                            title="修改密码"
+                            title={t('admin.changePassword')}
                           >
                             <Key className="w-4 h-4" />
                           </Button>

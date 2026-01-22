@@ -12,6 +12,7 @@ import AdminCategories from "./pages/AdminCategories";
 import AdminTags from "./pages/AdminTags";
 import AdminUsers from "./pages/AdminUsers";
 import Login from "./pages/Login";
+import Debug from "./pages/Debug";
 
 function Router() {
   return (
@@ -25,6 +26,7 @@ function Router() {
       <Route path={"/admin/tags"} component={AdminTags} />
       <Route path={"/admin/users"} component={AdminUsers} />
       <Route path={"/admin/:section"} component={AdminDashboard} />
+      <Route path={"/debug"} component={Debug} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
