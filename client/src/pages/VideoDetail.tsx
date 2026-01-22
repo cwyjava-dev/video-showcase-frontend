@@ -232,9 +232,9 @@ export default function VideoDetail() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-accent transition-colors">
+                          <h5 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-accent transition-colors">
                             {relatedVideo.title}
-                          </h3>
+                          </h5>
                           <p className="text-xs text-muted-foreground mt-1">
                             {relatedVideo.views.toLocaleString()} 次观看
                           </p>

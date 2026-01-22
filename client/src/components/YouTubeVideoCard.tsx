@@ -88,9 +88,9 @@ export default function YouTubeVideoCard({
           {/* Video info */}
           <div className="space-y-1 px-0">
             {/* Title */}
-            <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-accent transition-colors">
+            <h5 className="font-semibold text-foreground line-clamp-2 group-hover:text-accent transition-colors">
               {title}
-            </h3>
+            </h5>
 
             {/* Channel name */}
             <p className="text-sm text-muted-foreground hover:text-foreground transition-colors">
