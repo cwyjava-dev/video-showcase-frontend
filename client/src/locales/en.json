@@ -1,4 +1,7 @@
 {
+  "app": {
+    "title": "Videos"
+  },
   "common": {
     "search": "Search",
     "loading": "Loading...",

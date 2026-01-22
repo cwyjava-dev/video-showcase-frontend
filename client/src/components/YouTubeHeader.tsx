@@ -41,7 +41,7 @@ export default function YouTubeHeader({ onMenuClick, onSearch }: YouTubeHeaderPr
           
           <Link href="/">
             <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="text-xl font-bold text-accent">▶ 视频</div>
+              <div className="text-xl font-bold text-accent">▶ {t('app.title')}</div>
             </a>
           </Link>
         </div>

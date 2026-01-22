@@ -280,3 +280,7 @@
 - [x] 修复 AdminUsers 页面的多语言翻译
 - [x] 修复 AdminDashboard 页面的多语言翻译
 - [x] 为 AdminDashboard 页面中的所有硬编码中文文本添加多语言支持
+
+## Bug修复 - 其他硬编码中文文本需要翻译
+- [x] 为 YouTubeHeader 组件中的"▶ 视频"文本添加多语言支持
+- [x] 查找并修复所有其他硬编码的中文文本

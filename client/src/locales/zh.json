@@ -1,4 +1,7 @@
 {
+  "app": {
+    "title": "视频"
+  },
   "common": {
     "search": "搜索",
     "loading": "加载中...",
