@@ -291,7 +291,7 @@ export default function AdminVideos() {
                     >
                       <option value="">-- {t('admin.selectCategory')} --</option>
                       {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
+                        <option key={category.id} value={category.id.toString()}>
                           {category.name}
                         </option>
                       ))}
