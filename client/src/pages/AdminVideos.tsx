@@ -53,7 +53,7 @@ export default function AdminVideos() {
   const fetchVideos = async () => {
     try {
       setLoading(true);
-      const response = await apiService.getVideos();
+      const response = await apiService.getAllVideosForAdmin();
       setVideos(Array.isArray(response) ? response : (response.content || []));
     } catch (error) {
       console.error('获取视频列表失败:', error);

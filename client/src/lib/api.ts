@@ -183,8 +183,16 @@ class ApiService {
       return response.data;
     }
     
-    // 否则获取所有视频
+    // 否则获取所有已发布的视频
     const response = await this.api.get('/videos', { params: queryParams });
+    return response.data;
+  }
+
+  /**
+   * 获取所有视频（包括草稿）- 仅管理员
+   */
+  async getAllVideosForAdmin() {
+    const response = await this.api.get('/videos/admin/all');
     return response.data;
   }
 

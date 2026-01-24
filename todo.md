@@ -332,3 +332,7 @@
 ## Bug修复 - 后端只返回已发布视频
 - [x] 修改后端 VideoService，使其只返回 PUBLISHED 状态的视频
 - [x] 修改后端 VideoController 的所有查询接口
+
+## Bug修复 - 管理接口应该显示所有视频
+- [x] 为管理接口添加专用的视频查询端点 /api/videos/admin/all
+- [x] 修改前端管理页面，调用管理专用接口获取所有视频
