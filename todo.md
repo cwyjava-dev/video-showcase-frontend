@@ -399,3 +399,6 @@
 
 ## Bug修复 - 新建视频页面重复的 Video Type
 - [x] 移除新建视频页面中重复的 Video Type 选择器
+
+## Bug修复 - 误删编辑表单中的 Video Type
+- [x] 恢复编辑表单中的 Video Type 选择器
