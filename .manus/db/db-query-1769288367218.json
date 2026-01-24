@@ -1,0 +1,61 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'videos';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user EYCHuWF6Uz6Nxf8.root --database oRagAHAnrpgHQWa5YM6DEy --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'videos';",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "title"
+    },
+    {
+      "COLUMN_NAME": "slug"
+    },
+    {
+      "COLUMN_NAME": "description"
+    },
+    {
+      "COLUMN_NAME": "videoUrl"
+    },
+    {
+      "COLUMN_NAME": "videoKey"
+    },
+    {
+      "COLUMN_NAME": "thumbnailUrl"
+    },
+    {
+      "COLUMN_NAME": "thumbnailKey"
+    },
+    {
+      "COLUMN_NAME": "duration"
+    },
+    {
+      "COLUMN_NAME": "fileSize"
+    },
+    {
+      "COLUMN_NAME": "mimeType"
+    },
+    {
+      "COLUMN_NAME": "viewCount"
+    },
+    {
+      "COLUMN_NAME": "categoryId"
+    },
+    {
+      "COLUMN_NAME": "uploadedBy"
+    },
+    {
+      "COLUMN_NAME": "status"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\ntitle\nslug\ndescription\nvideoUrl\nvideoKey\nthumbnailUrl\nthumbnailKey\nduration\nfileSize\nmimeType\nviewCount\ncategoryId\nuploadedBy\nstatus\ncreatedAt\nupdatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 1538
+}

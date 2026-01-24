@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO videos (title, description, video_url, video_type, status, views, created_at, category_id) VALUES \n('YouTube 测试视频', 'YouTube 视频测试描述', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'YOUTUBE', 'PUBLISHED', 100, NOW(), 1),\n('Bilibili 测试视频', 'Bilibili 视频测试描述', 'https://player.bilibili.com/player.html?bvid=BV1GJ411x7p7', 'BILIBILI', 'PUBLISHED', 50, NOW(), 1),\n('本地视频测试', '本地视频测试描述', 'https://example.com/video.mp4', 'LOCAL', 'PUBLISHED', 75, NOW(), 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user EYCHuWF6Uz6Nxf8.root --database oRagAHAnrpgHQWa5YM6DEy --execute INSERT INTO videos (title, description, video_url, video_type, status, views, created_at, category_id) VALUES \n('YouTube 测试视频', 'YouTube 视频测试描述', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'YOUTUBE', 'PUBLISHED', 100, NOW(), 1),\n('Bilibili 测试视频', 'Bilibili 视频测试描述', 'https://player.bilibili.com/player.html?bvid=BV1GJ411x7p7', 'BILIBILI', 'PUBLISHED', 50, NOW(), 1),\n('本地视频测试', '本地视频测试描述', 'https://example.com/video.mp4', 'LOCAL', 'PUBLISHED', 75, NOW(), 1);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'video_url' in 'field list'"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE videos ADD COLUMN video_type VARCHAR(50) NOT NULL DEFAULT 'LOCAL';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user EYCHuWF6Uz6Nxf8.root --database oRagAHAnrpgHQWa5YM6DEy --execute ALTER TABLE videos ADD COLUMN video_type VARCHAR(50) NOT NULL DEFAULT 'LOCAL';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2832
+}
