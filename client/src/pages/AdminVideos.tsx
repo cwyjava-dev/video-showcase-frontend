@@ -86,15 +86,14 @@ export default function AdminVideos() {
 
       if (editingId) {
         const categoryId = formData.categoryId ? parseInt(formData.categoryId) : null;
-        const selectedCategory = categoryId ? categories.find(c => c.id === categoryId) : null;
         
         const videoData: any = {
           title: formData.title,
           description: formData.description,
         };
         
-        if (selectedCategory) {
-          videoData.category = selectedCategory;
+        if (categoryId) {
+          videoData.categoryId = categoryId;
         }
         
         await apiService.updateVideo(editingId, videoData);

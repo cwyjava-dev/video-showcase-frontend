@@ -306,3 +306,6 @@
 - [x] 修改前端 AdminVideos，只发送用户实际修改的字段（title、description、categoryId）
 - [x] 不发送 createdAt、updatedAt、status、tags、id 等硬编码字段
 - [x] 确保与用户提交的表单数据相匹配
+
+## Bug修复 - category 应该只上传 id
+- [x] 修改前端 AdminVideos，修改视频时 category 只上传 id 而不是整个对象
