@@ -380,6 +380,7 @@ export default function AdminVideos() {
                     <TableRow>
                       <TableHead>{t('video.title')}</TableHead>
                       <TableHead>{t('video.category')}</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>{t('video.views')}</TableHead>
                       <TableHead>{t('admin.actions')}</TableHead>
                     </TableRow>
@@ -389,6 +390,15 @@ export default function AdminVideos() {
                       <TableRow key={video.id}>
                         <TableCell>{video.title}</TableCell>
                         <TableCell>{getCategoryName(video.category?.id)}</TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            video.status === 'PUBLISHED' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {video.status === 'PUBLISHED' ? 'Published' : 'Draft'}
+                          </span>
+                        </TableCell>
                         <TableCell>{video.views}</TableCell>
                         <TableCell>
                           <div className="flex gap-2">

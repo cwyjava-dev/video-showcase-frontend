@@ -325,3 +325,6 @@
 - [x] 修改 API 调用，发送 status 字段
 - [x] 修改 Video 接口，添加 status 字段
 - [ ] 在视频列表中显示当前状态
+
+## UI改进 - 视频列表显示状态
+- [x] 在视频表格中添加状态列，显示 DRAFT/PUBLISHED
