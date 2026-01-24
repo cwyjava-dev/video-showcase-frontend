@@ -192,7 +192,11 @@ export default function VideoDetail() {
                     </div>
                   ) : video.videoType === "YOUTUBE" && video.videoUrl ? (
                     video.videoUrl.includes('<iframe') ? (
-                      <div className="w-full h-full flex items-center justify-center" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl) }} />
+                      <div className="w-full h-full flex items-center justify-center bg-black" style={{ minHeight: '100%' }}>
+                        <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl) }} />
+                        </div>
+                      </div>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-black">
                         <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
@@ -215,7 +219,11 @@ export default function VideoDetail() {
                     )
                   ) : video.videoType === "BILIBILI" && video.videoUrl ? (
                     video.videoUrl.includes('<iframe') ? (
-                      <div className="w-full h-full flex items-center justify-center" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl) }} />
+                      <div className="w-full h-full flex items-center justify-center bg-black" style={{ minHeight: '100%' }}>
+                        <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl) }} />
+                        </div>
+                      </div>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-black">
                         <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
