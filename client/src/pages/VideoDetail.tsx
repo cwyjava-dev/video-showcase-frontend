@@ -175,11 +175,11 @@ export default function VideoDetail() {
 
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-7xl mx-auto p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Main video section */}
-              <div className="space-y-4">
-                {/* Video player container - responsive with proper aspect ratio */}
-                <div className="w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+              <div className="lg:col-span-2 space-y-4">
+                {/* Video player */}
+                <div className="w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: 'auto' }}>
                   {!user ? (
                     <div className="text-center space-y-4">
                       <p className="text-foreground text-lg">请登录后观看视频</p>
@@ -289,7 +289,7 @@ export default function VideoDetail() {
               </div>
 
               {/* Related videos section */}
-              <div>
+              <div className="lg:col-span-1">
                 <h2 className="text-lg font-bold mb-4">相关视频</h2>
                 <div className="space-y-3">
                   {relatedVideos.map((relatedVideo) => (

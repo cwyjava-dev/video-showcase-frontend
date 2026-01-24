@@ -1,8 +1,0 @@
-{
-  "query": "INSERT INTO videos (title, description, videoUrl, video_type, status, views, user_id, category_id, created_at) VALUES \n('YouTube 测试视频', 'YouTube 视频测试描述', 'dQw4w9WgXcQ', 'YOUTUBE', 'PUBLISHED', 100, 1, 1, NOW()),\n('Bilibili 测试视频', 'Bilibili 视频测试描述', 'BV1GJ411x7p7', 'BILIBILI', 'PUBLISHED', 50, 1, 1, NOW()),\n('本地视频测试', '本地视频测试描述', 'https://example.com/video.mp4', 'LOCAL', 'PUBLISHED', 75, 1, 1, NOW());",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user EYCHuWF6Uz6Nxf8.root --database oRagAHAnrpgHQWa5YM6DEy --execute INSERT INTO videos (title, description, videoUrl, video_type, status, views, user_id, category_id, created_at) VALUES \n('YouTube 测试视频', 'YouTube 视频测试描述', 'dQw4w9WgXcQ', 'YOUTUBE', 'PUBLISHED', 100, 1, 1, NOW()),\n('Bilibili 测试视频', 'Bilibili 视频测试描述', 'BV1GJ411x7p7', 'BILIBILI', 'PUBLISHED', 50, 1, 1, NOW()),\n('本地视频测试', '本地视频测试描述', 'https://example.com/video.mp4', 'LOCAL', 'PUBLISHED', 75, 1, 1, NOW());",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1054 (42S22) at line 1: Unknown column 'video_type' in 'field list'"
-  ]
-}
