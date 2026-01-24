@@ -349,3 +349,6 @@
 ## 功能实现 - 管理后台 videoType 选择器
 - [x] 在前端管理页面添加 videoType 选择器
 - [x] 支持在创建和修改视频时选择视频类型（LOCAL、YOUTUBE、BILIBILI）
+
+## Bug修复 - 视频播放器类型判断
+- [x] 修改 VideoDetail.tsx，当视频类型不是 LOCAL 时，只使用嵌入式代码，不使用 video 标签

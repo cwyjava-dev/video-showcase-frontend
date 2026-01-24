@@ -183,7 +183,7 @@ export default function VideoDetail() {
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
-                  ) : video.videoUrl ? (
+                  ) : video.videoType === "LOCAL" && video.videoUrl ? (
                     <video
                       src={video.videoUrl}
                       controls
