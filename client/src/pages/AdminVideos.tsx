@@ -240,18 +240,6 @@ export default function AdminVideos() {
                   {editingId && (
                     <>
                       <div>
-                        <label className="text-sm font-medium">Video Type</label>
-                        <select
-                          value={formData.videoType}
-                          onChange={(e) => setFormData({ ...formData, videoType: e.target.value as 'LOCAL' | 'YOUTUBE' | 'BILIBILI' })}
-                          className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
-                        >
-                          <option value="LOCAL">Local Video</option>
-                          <option value="YOUTUBE">YouTube</option>
-                          <option value="BILIBILI">Bilibili</option>
-                        </select>
-                      </div>
-                      <div>
                         <label className="text-sm font-medium flex items-center gap-2">
                           <LinkIcon className="w-4 h-4" />
                           {formData.videoType === 'LOCAL' ? 'Video URL / Link' : 'Embedded HTML / URL'}
