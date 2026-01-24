@@ -42,6 +42,7 @@ export default function AdminVideos() {
     thumbnailUrl: '',
     categoryId: '',
     status: 'DRAFT' as 'DRAFT' | 'PUBLISHED',
+    videoType: 'LOCAL' as 'LOCAL' | 'YOUTUBE' | 'BILIBILI',
     videoFile: null as File | null,
   });
 
@@ -99,12 +100,16 @@ export default function AdminVideos() {
           title: formData.title,
           description: formData.description,
           status: formData.status,
+          videoType: formData.videoType,
         };
         
         if (categoryId) {
           videoData.category = { id: categoryId };
         }
         
+        if (formData.videoUrl) {
+          videoData.videoUrl = formData.videoUrl;
+        }
         await apiService.updateVideo(editingId, videoData);
       } else {
         let videoUrl = formData.videoUrl;
@@ -128,16 +133,20 @@ export default function AdminVideos() {
           }
         }
 
-        await apiService.createVideo({
+        const createData: any = {
           title: formData.title,
           description: formData.description,
           videoUrl: videoUrl,
           thumbnailUrl: formData.thumbnailUrl,
-          categoryId: formData.categoryId ? parseInt(formData.categoryId) : undefined,
-        });
+          videoType: formData.videoType,
+        };
+        if (formData.categoryId) {
+          createData.categoryId = parseInt(formData.categoryId);
+        }
+        await apiService.createVideo(createData);
       }
       
-      setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoFile: null });
+      setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoType: 'LOCAL', videoFile: null });
       setEditingId(null);
       setIsOpen(false);
       setUploadProgress(0);
@@ -157,6 +166,7 @@ export default function AdminVideos() {
       thumbnailUrl: video.thumbnailUrl || '',
       categoryId: video.category?.id?.toString() || '',
       status: video.status || 'DRAFT',
+      videoType: (video as any).videoType || 'LOCAL',
       videoFile: null,
     });
     setEditingId(video.id);
@@ -179,7 +189,7 @@ export default function AdminVideos() {
   const handleCloseDialog = () => {
     setIsOpen(false);
     setEditingId(null);
-    setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoFile: null });
+    setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoType: 'LOCAL', videoFile: null });
     setUploadProgress(0);
   };
 
@@ -199,7 +209,7 @@ export default function AdminVideos() {
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button onClick={() => { setEditingId(null); setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoFile: null }); }}>
+                <Button onClick={() => { setEditingId(null); setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoType: 'LOCAL', videoFile: null }); }}>
                   <Plus className="w-4 h-4 mr-2" />
                   {t('admin.newVideo')}
                 </Button>
@@ -331,6 +341,18 @@ export default function AdminVideos() {
                           {category.name}
                         </option>
                       ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Video Type</label>
+                    <select
+                      value={formData.videoType}
+                      onChange={(e) => setFormData({ ...formData, videoType: e.target.value as 'LOCAL' | 'YOUTUBE' | 'BILIBILI' })}
+                      className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                    >
+                      <option value="LOCAL">Local Video</option>
+                      <option value="YOUTUBE">YouTube</option>
+                      <option value="BILIBILI">Bilibili</option>
                     </select>
                   </div>
                   <div>

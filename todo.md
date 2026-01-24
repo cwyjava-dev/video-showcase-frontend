@@ -345,3 +345,7 @@
 - [x] 修改后端 Video 实体，添加 videoType 字段
 - [x] 修改前端视频详情页面，添加 YouTube 和 Bilibili 流媒体嵌入
 - [x] 添加登录棃棁，未登录用户不能播放视频
+
+## 功能实现 - 管理后台 videoType 选择器
+- [x] 在前端管理页面添加 videoType 选择器
+- [x] 支持在创建和修改视频时选择视频类型（LOCAL、YOUTUBE、BILIBILI）
