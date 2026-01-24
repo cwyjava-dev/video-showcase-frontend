@@ -251,44 +251,33 @@ export default function AdminVideos() {
                           <option value="BILIBILI">Bilibili</option>
                         </select>
                       </div>
-                      {formData.videoType === 'LOCAL' ? (
-                        <div>
-                          <label className="text-sm font-medium flex items-center gap-2">
-                            <Upload className="w-4 h-4" />
-                            Upload Local Video
-                          </label>
+                      <div>
+                        <label className="text-sm font-medium flex items-center gap-2">
+                          <LinkIcon className="w-4 h-4" />
+                          {formData.videoType === 'LOCAL' ? 'Video URL / Link' : 'Embedded HTML / URL'}
+                        </label>
+                        {formData.videoType === 'LOCAL' ? (
                           <Input
-                            type="file"
-                            accept="video/*"
-                            onChange={handleFileChange}
-                            placeholder="Select video file"
+                            value={formData.videoUrl}
+                            onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                            placeholder="Enter video URL or link"
                             className="mt-1"
                           />
-                          {formData.videoFile && (
-                            <p className="text-xs text-accent mt-1">
-                              ✓ Selected: {formData.videoFile.name}
-                            </p>
-                          )}
-                        </div>
-                      ) : (
-                        <div>
-                          <label className="text-sm font-medium flex items-center gap-2">
-                            <LinkIcon className="w-4 h-4" />
-                            Embedded HTML / URL
-                          </label>
-                          <Input
+                        ) : (
+                          <Textarea
                             value={formData.videoUrl}
                             onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
                             placeholder={formData.videoType === 'YOUTUBE' ? 'YouTube URL or Video ID' : 'Bilibili URL or Video ID'}
                             className="mt-1"
+                            rows={4}
                           />
-                          {formData.videoUrl && (
-                            <p className="text-xs text-accent mt-1">
-                              ✓ URL entered
-                            </p>
-                          )}
-                        </div>
-                      )}
+                        )}
+                        {formData.videoUrl && (
+                          <p className="text-xs text-accent mt-1">
+                            ✓ URL entered
+                          </p>
+                        )}
+                      </div>
                       <div>
                         <label className="text-sm font-medium">{t('admin.thumbnail')}</label>
                         <Input
@@ -317,44 +306,71 @@ export default function AdminVideos() {
                         <p className="text-sm font-medium text-foreground">{t('admin.videoSource')}</p>
                         
                         {formData.videoType === 'LOCAL' ? (
-                          <div>
-                            <label className="text-sm font-medium flex items-center gap-2">
-                              <Upload className="w-4 h-4" />
-                              {t('admin.uploadMethod')}
-                            </label>
-                            <Input
-                              type="file"
-                              accept="video/*"
-                              onChange={handleFileChange}
-                              placeholder={t('video.selectFile')}
-                              className="mt-1"
-                            />
-                            {formData.videoFile && (
-                              <p className="text-xs text-accent mt-1">
-                                ✓ {t('admin.selected')}: {formData.videoFile.name}
-                              </p>
-                            )}
+                          <>
+                            <div>
+                              <label className="text-sm font-medium flex items-center gap-2">
+                                <Upload className="w-4 h-4" />
+                                {t('admin.uploadMethod')}
+                              </label>
+                              <Input
+                                type="file"
+                                accept="video/*"
+                                onChange={handleFileChange}
+                                placeholder={t('video.selectFile')}
+                                className="mt-1"
+                              />
+                              {formData.videoFile && (
+                                <p className="text-xs text-accent mt-1">
+                                  ✓ {t('admin.selected')}: {formData.videoFile.name}
+                                </p>
+                              )}
 
-                            {uploadProgress > 0 && uploadProgress < 100 && (
-                              <div className="w-full bg-secondary rounded-full h-2 mt-2">
-                                <div
-                                  className="bg-primary h-2 rounded-full transition-all"
-                                  style={{ width: `${uploadProgress}%` }}
-                                />
-                              </div>
-                            )}
-                          </div>
+                              {uploadProgress > 0 && uploadProgress < 100 && (
+                                <div className="w-full bg-secondary rounded-full h-2 mt-2">
+                                  <div
+                                    className="bg-primary h-2 rounded-full transition-all"
+                                    style={{ width: `${uploadProgress}%` }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 h-px bg-border"></div>
+                              <span className="text-xs text-muted-foreground">{t('video.or')}</span>
+                              <div className="flex-1 h-px bg-border"></div>
+                            </div>
+
+                            <div>
+                              <label className="text-sm font-medium flex items-center gap-2">
+                                <LinkIcon className="w-4 h-4" />
+                                Video URL / Link
+                              </label>
+                              <Input
+                                value={formData.videoUrl}
+                                onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                                placeholder="Enter video URL or link"
+                                className="mt-1"
+                              />
+                              {formData.videoUrl && (
+                                <p className="text-xs text-accent mt-1">
+                                  ✓ URL entered
+                                </p>
+                              )}
+                            </div>
+                          </>
                         ) : (
                           <div>
                             <label className="text-sm font-medium flex items-center gap-2">
                               <LinkIcon className="w-4 h-4" />
                               Embedded HTML / URL
                             </label>
-                            <Input
+                            <Textarea
                               value={formData.videoUrl}
                               onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
                               placeholder={formData.videoType === 'YOUTUBE' ? 'YouTube URL or Video ID' : 'Bilibili URL or Video ID'}
                               className="mt-1"
+                              rows={4}
                             />
                             {formData.videoUrl && (
                               <p className="text-xs text-accent mt-1">

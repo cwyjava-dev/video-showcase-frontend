@@ -357,3 +357,8 @@
 - [x] 修改 AdminVideos.tsx，根据 videoType 动态显示输入方式
 - [x] LOCAL 类型显示文件上传
 - [x] YOUTUBE/BILIBILI 类型显示"嵌入式 HTML"输入框
+
+## Bug修复 - 管理后台表单优化
+- [x] 移除编辑时重复的 Video Type 选择器
+- [x] LOCAL 类型支持同时输入链接
+- [x] 非 LOCAL 类型使用 Textarea 显示更大的输入框
