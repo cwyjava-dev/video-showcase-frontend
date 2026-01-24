@@ -194,7 +194,7 @@ export default function VideoDetail() {
                     video.videoUrl.includes('<iframe') ? (
                       <div className="w-full h-full flex items-center justify-center bg-black" style={{ minHeight: '100%' }}>
                         <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl) }} />
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl, { ALLOWED_TAGS: ['iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'title'] }) }} />
                         </div>
                       </div>
                     ) : (
@@ -221,7 +221,7 @@ export default function VideoDetail() {
                     video.videoUrl.includes('<iframe') ? (
                       <div className="w-full h-full flex items-center justify-center bg-black" style={{ minHeight: '100%' }}>
                         <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl) }} />
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl, { ALLOWED_TAGS: ['iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'title'] }) }} />
                         </div>
                       </div>
                     ) : (
