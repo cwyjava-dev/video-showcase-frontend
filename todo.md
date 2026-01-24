@@ -340,3 +340,8 @@
 ## Bug修复 - 后端按分类过滤视频
 - [x] 修复 GET /api/videos?categoryId=X 接口，正确返回指定分类的视频
 - [x] 修复 GET /api/videos/admin/all?categoryId=X 接口，正确返回指定分类的所有视频
+
+## 功能实现 - YouTube 和 Bilibili 视频嵌入播放
+- [x] 修改后端 Video 实体，添加 videoType 字段
+- [x] 修改前端视频详情页面，添加 YouTube 和 Bilibili 流媒体嵌入
+- [x] 添加登录棃棁，未登录用户不能播放视频

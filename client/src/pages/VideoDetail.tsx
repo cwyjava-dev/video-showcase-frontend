@@ -1,4 +1,3 @@
-import { apiService } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ThumbsUp, Share2, MoreVertical, Loader2 } from "lucide-react";
@@ -6,6 +5,8 @@ import { useParams, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import YouTubeHeader from "@/components/YouTubeHeader";
 import YouTubeSidebar from "@/components/YouTubeSidebar";
+import { apiService } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Video {
   id: number;
@@ -17,6 +18,7 @@ interface Video {
   views: number;
   createdAt: string;
   status: "published" | "draft" | "archived";
+  videoType?: "LOCAL" | "YOUTUBE" | "BILIBILI";
   fileSize?: number;
   mimeType?: string;
 }
@@ -30,6 +32,7 @@ export default function VideoDetail() {
   const params = useParams();
   const videoId = params?.id ? parseInt(params.id) : null;
   const [, navigate] = useLocation();
+  const { user } = useAuth();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -38,6 +41,20 @@ export default function VideoDetail() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // 提取 YouTube 视频 ID
+  const extractYouTubeId = (url: string): string | null => {
+    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
+
+  // 提取 Bilibili 视频 ID
+  const extractBilibiliId = (url: string): string | null => {
+    const regex = /(?:bilibili\.com\/video\/)([^/?]+)|(?:b23\.tv\/)([^/?]+)/;
+    const match = url.match(regex);
+    return match ? (match[1] || match[2]) : null;
+  };
 
   // 加载分类列表
   useEffect(() => {
@@ -106,7 +123,6 @@ export default function VideoDetail() {
   }
 
   const handleMenuToggle = () => {
-    // 在桌面版本上切换折叠状态，在移动版本上切换打开状态
     if (window.innerWidth >= 1024) {
       setSidebarCollapsed(!sidebarCollapsed);
     } else {
@@ -135,17 +151,47 @@ export default function VideoDetail() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Main video section */}
               <div className="lg:col-span-2 space-y-4">
-                {/* Video player - 自適应大小 */}
-                <div className="w-full bg-black rounded-lg overflow-hidden">
-                  {video.videoUrl ? (
+                {/* Video player */}
+                <div className="w-full bg-black rounded-lg overflow-hidden aspect-video flex items-center justify-center">
+                  {!user ? (
+                    <div className="text-center space-y-4">
+                      <p className="text-foreground text-lg">请登录后观看视频</p>
+                      <Button
+                        onClick={() => window.location.href = '/login'}
+                        className="gap-2"
+                      >
+                        登录
+                      </Button>
+                    </div>
+                  ) : video.videoType === "YOUTUBE" && video.videoUrl ? (
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src={`https://www.youtube.com/embed/${extractYouTubeId(video.videoUrl)}`}
+                      title={video.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : video.videoType === "BILIBILI" && video.videoUrl ? (
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src={`https://player.bilibili.com/player.html?bvid=${extractBilibiliId(video.videoUrl)}`}
+                      title={video.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : video.videoUrl ? (
                     <video
                       src={video.videoUrl}
                       controls
-                      className="w-full h-auto"
+                      className="w-full h-full"
                       autoPlay
                     />
                   ) : (
-                    <div className="w-full aspect-video flex items-center justify-center bg-black rounded-lg">
+                    <div className="text-center">
                       <p className="text-muted-foreground">视频不可用</p>
                     </div>
                   )}
@@ -203,47 +249,30 @@ export default function VideoDetail() {
                 </div>
               </div>
 
-              {/* Sidebar: Related videos */}
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-foreground">
-                  推荐视频
-                </h2>
+              {/* Related videos section */}
+              <div className="lg:col-span-1">
+                <h2 className="text-lg font-bold mb-4">相关视频</h2>
                 <div className="space-y-3">
                   {relatedVideos.map((relatedVideo) => (
                     <div
                       key={relatedVideo.id}
-                      className="group cursor-pointer"
+                      className="flex gap-3 cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => handleRelatedVideoClick(relatedVideo.id)}
                     >
-                      <div className="flex gap-2">
-                        <div className="relative w-32 aspect-video bg-secondary rounded flex-shrink-0">
-                          {relatedVideo.thumbnailUrl ? (
-                            <img
-                              src={relatedVideo.thumbnailUrl}
-                              alt={relatedVideo.title}
-                              className="w-full h-full object-cover rounded group-hover:brightness-75 transition-all"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-secondary rounded">
-                              <span className="text-xs text-muted-foreground">
-                                无缩略图
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h5 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-accent transition-colors">
-                            {relatedVideo.title}
-                          </h5>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {relatedVideo.views.toLocaleString()} 次观看
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(relatedVideo.createdAt).toLocaleDateString(
-                              "zh-CN"
-                            )}
-                          </p>
-                        </div>
+                      {relatedVideo.thumbnailUrl && (
+                        <img
+                          src={relatedVideo.thumbnailUrl}
+                          alt={relatedVideo.title}
+                          className="w-24 h-14 rounded object-cover flex-shrink-0"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium line-clamp-2">
+                          {relatedVideo.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {relatedVideo.views.toLocaleString()} 次观看
+                        </p>
                       </div>
                     </div>
                   ))}
