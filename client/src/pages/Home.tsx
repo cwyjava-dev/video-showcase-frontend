@@ -95,6 +95,11 @@ export default function Home() {
     setSearchQuery(query);
   };
 
+  const handleCategorySelect = (categoryId: number | undefined) => {
+    setSelectedCategory(categoryId);
+    setSearchQuery(""); // 清除搜索关键字
+  };
+
   const handleMenuToggle = () => {
     // 在桌面版本上切换折叠状态，在移动版本上切换打开状态
     if (window.innerWidth >= 1024) {
@@ -120,7 +125,7 @@ export default function Home() {
           isCollapsed={sidebarCollapsed}
           selectedCategory={selectedCategory}
           categories={categories}
-          onCategorySelect={setSelectedCategory}
+          onCategorySelect={handleCategorySelect}
         />
 
         {/* Main content */}
