@@ -290,3 +290,10 @@
 
 ## Bug修复 - 新建视频时分类无法保存
 - [x] 修复新建视频时分类字段无法保存到数据库的问题
+
+## 后端集成 - 将后端代码复制到前端项目
+- [x] 克隆后端仓库到前端项目的 /backend 目录
+- [x] 修复后端代码中的分类保存问题（修改 Video 类添加 @Transient categoryId 字段）
+- [x] 修改 VideoController 的 updateVideo 和 createVideo 方法
+- [x] 修改 VideoService 的相关方法
+- [x] 测试修复效果
