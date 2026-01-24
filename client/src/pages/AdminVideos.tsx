@@ -139,9 +139,10 @@ export default function AdminVideos() {
           videoUrl: videoUrl,
           thumbnailUrl: formData.thumbnailUrl,
           videoType: formData.videoType,
+          status: formData.status,
         };
         if (formData.categoryId) {
-          createData.categoryId = parseInt(formData.categoryId);
+          createData.category = { id: parseInt(formData.categoryId) };
         }
         await apiService.createVideo(createData);
       }

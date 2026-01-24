@@ -392,3 +392,7 @@
 
 ## Bug修复 - YouTube/Bilibili 嵌入式 HTML 修改不保存
 - [x] 修复编辑 YouTube/Bilibili 视频时，嵌入式 HTML 修改不保存的问题
+
+## Bug修复 - 新建视频时分类和状态未保存
+- [x] 修复新建视频时，分类（category）没有正常保存的问题
+- [x] 修复新建视频时，状态（status）没有正常保存的问题
