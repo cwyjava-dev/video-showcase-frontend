@@ -240,17 +240,55 @@ export default function AdminVideos() {
                   {editingId && (
                     <>
                       <div>
-                        <label className="text-sm font-medium flex items-center gap-2">
-                          <LinkIcon className="w-4 h-4" />
-                          {t('admin.linkMethod')}
-                        </label>
-                        <Input
-                          value={formData.videoUrl}
-                          onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                          placeholder={t('video.videoUrl')}
-                          className="mt-1"
-                        />
+                        <label className="text-sm font-medium">Video Type</label>
+                        <select
+                          value={formData.videoType}
+                          onChange={(e) => setFormData({ ...formData, videoType: e.target.value as 'LOCAL' | 'YOUTUBE' | 'BILIBILI' })}
+                          className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                        >
+                          <option value="LOCAL">Local Video</option>
+                          <option value="YOUTUBE">YouTube</option>
+                          <option value="BILIBILI">Bilibili</option>
+                        </select>
                       </div>
+                      {formData.videoType === 'LOCAL' ? (
+                        <div>
+                          <label className="text-sm font-medium flex items-center gap-2">
+                            <Upload className="w-4 h-4" />
+                            Upload Local Video
+                          </label>
+                          <Input
+                            type="file"
+                            accept="video/*"
+                            onChange={handleFileChange}
+                            placeholder="Select video file"
+                            className="mt-1"
+                          />
+                          {formData.videoFile && (
+                            <p className="text-xs text-accent mt-1">
+                              ✓ Selected: {formData.videoFile.name}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <div>
+                          <label className="text-sm font-medium flex items-center gap-2">
+                            <LinkIcon className="w-4 h-4" />
+                            Embedded HTML / URL
+                          </label>
+                          <Input
+                            value={formData.videoUrl}
+                            onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                            placeholder={formData.videoType === 'YOUTUBE' ? 'YouTube URL or Video ID' : 'Bilibili URL or Video ID'}
+                            className="mt-1"
+                          />
+                          {formData.videoUrl && (
+                            <p className="text-xs text-accent mt-1">
+                              ✓ URL entered
+                            </p>
+                          )}
+                        </div>
+                      )}
                       <div>
                         <label className="text-sm font-medium">{t('admin.thumbnail')}</label>
                         <Input
@@ -263,60 +301,68 @@ export default function AdminVideos() {
                   )}
                   {!editingId && (
                     <>
+                      <div>
+                        <label className="text-sm font-medium">Video Type</label>
+                        <select
+                          value={formData.videoType}
+                          onChange={(e) => setFormData({ ...formData, videoType: e.target.value as 'LOCAL' | 'YOUTUBE' | 'BILIBILI' })}
+                          className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                        >
+                          <option value="LOCAL">Local Video</option>
+                          <option value="YOUTUBE">YouTube</option>
+                          <option value="BILIBILI">Bilibili</option>
+                        </select>
+                      </div>
                       <div className="space-y-3 border border-border rounded-lg p-3 bg-secondary/30">
                         <p className="text-sm font-medium text-foreground">{t('admin.videoSource')}</p>
                         
-                        <div>
-                          <label className="text-sm font-medium flex items-center gap-2">
-                            <Upload className="w-4 h-4" />
-                            {t('admin.uploadMethod')}
-                          </label>
-                          <Input
-                            type="file"
-                            accept="video/*"
-                            onChange={handleFileChange}
-                            placeholder={t('video.selectFile')}
-                            className="mt-1"
-                          />
-                          {formData.videoFile && (
-                            <p className="text-xs text-accent mt-1">
-                              ✓ {t('admin.selected')}: {formData.videoFile.name}
-                            </p>
-                          )}
-                        </div>
-
-                        {uploadProgress > 0 && uploadProgress < 100 && (
-                          <div className="w-full bg-secondary rounded-full h-2">
-                            <div
-                              className="bg-primary h-2 rounded-full transition-all"
-                              style={{ width: `${uploadProgress}%` }}
+                        {formData.videoType === 'LOCAL' ? (
+                          <div>
+                            <label className="text-sm font-medium flex items-center gap-2">
+                              <Upload className="w-4 h-4" />
+                              {t('admin.uploadMethod')}
+                            </label>
+                            <Input
+                              type="file"
+                              accept="video/*"
+                              onChange={handleFileChange}
+                              placeholder={t('video.selectFile')}
+                              className="mt-1"
                             />
+                            {formData.videoFile && (
+                              <p className="text-xs text-accent mt-1">
+                                ✓ {t('admin.selected')}: {formData.videoFile.name}
+                              </p>
+                            )}
+
+                            {uploadProgress > 0 && uploadProgress < 100 && (
+                              <div className="w-full bg-secondary rounded-full h-2 mt-2">
+                                <div
+                                  className="bg-primary h-2 rounded-full transition-all"
+                                  style={{ width: `${uploadProgress}%` }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div>
+                            <label className="text-sm font-medium flex items-center gap-2">
+                              <LinkIcon className="w-4 h-4" />
+                              Embedded HTML / URL
+                            </label>
+                            <Input
+                              value={formData.videoUrl}
+                              onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                              placeholder={formData.videoType === 'YOUTUBE' ? 'YouTube URL or Video ID' : 'Bilibili URL or Video ID'}
+                              className="mt-1"
+                            />
+                            {formData.videoUrl && (
+                              <p className="text-xs text-accent mt-1">
+                                ✓ URL entered
+                              </p>
+                            )}
                           </div>
                         )}
-
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-px bg-border"></div>
-                          <span className="text-xs text-muted-foreground">{t('video.or')}</span>
-                          <div className="flex-1 h-px bg-border"></div>
-                        </div>
-
-                        <div>
-                          <label className="text-sm font-medium flex items-center gap-2">
-                            <LinkIcon className="w-4 h-4" />
-                            {t('admin.linkMethod')}
-                          </label>
-                          <Input
-                            value={formData.videoUrl}
-                            onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                            placeholder={t('video.videoUrl')}
-                            className="mt-1"
-                          />
-                          {formData.videoUrl && (
-                            <p className="text-xs text-accent mt-1">
-                              ✓ {t('admin.linkEntered')}
-                            </p>
-                          )}
-                        </div>
                       </div>
                       <div>
                         <label className="text-sm font-medium">{t('admin.thumbnail')}</label>

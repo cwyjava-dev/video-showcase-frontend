@@ -352,3 +352,8 @@
 
 ## Bug修复 - 视频播放器类型判断
 - [x] 修改 VideoDetail.tsx，当视频类型不是 LOCAL 时，只使用嵌入式代码，不使用 video 标签
+
+## 功能改进 - 管理后台表单根据 videoType 动态变化
+- [x] 修改 AdminVideos.tsx，根据 videoType 动态显示输入方式
+- [x] LOCAL 类型显示文件上传
+- [x] YOUTUBE/BILIBILI 类型显示"嵌入式 HTML"输入框
