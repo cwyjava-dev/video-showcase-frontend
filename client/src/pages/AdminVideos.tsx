@@ -16,7 +16,7 @@ interface Video {
   description?: string;
   videoUrl: string;
   thumbnailUrl?: string;
-  categoryId?: number;
+  category?: Category;
   views: number;
   createdAt: string;
 }
@@ -67,6 +67,11 @@ export default function AdminVideos() {
     } catch (error) {
       console.error('获取分类列表失败:', error);
     }
+  };
+  const getCategoryName = (categoryId?: number) => {
+    if (!categoryId) return '-';
+    const category = categories.find(c => c.id === categoryId);
+    return category ? category.name : '-';
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,7 +151,7 @@ export default function AdminVideos() {
       description: video.description || '',
       videoUrl: video.videoUrl,
       thumbnailUrl: video.thumbnailUrl || '',
-      categoryId: video.categoryId?.toString() || '',
+      categoryId: video.category?.id?.toString() || '',
       videoFile: null,
     });
     setEditingId(video.id);
@@ -173,11 +178,6 @@ export default function AdminVideos() {
     setUploadProgress(0);
   };
 
-  const getCategoryName = (categoryId?: number) => {
-    if (!categoryId) return '-';
-    const category = categories.find(c => c.id === categoryId);
-    return category?.name || `-`;
-  };
 
   return (
     <div className="min-h-screen bg-gradient-dark">
@@ -222,6 +222,30 @@ export default function AdminVideos() {
                       rows={3}
                     />
                   </div>
+                  {editingId && (
+                    <>
+                      <div>
+                        <label className="text-sm font-medium flex items-center gap-2">
+                          <LinkIcon className="w-4 h-4" />
+                          {t('admin.linkMethod')}
+                        </label>
+                        <Input
+                          value={formData.videoUrl}
+                          onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                          placeholder={t('video.videoUrl')}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium">{t('admin.thumbnail')}</label>
+                        <Input
+                          value={formData.thumbnailUrl}
+                          onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
+                          placeholder={t('admin.thumbnailUrl')}
+                        />
+                      </div>
+                    </>
+                  )}
                   {!editingId && (
                     <>
                       <div className="space-y-3 border border-border rounded-lg p-3 bg-secondary/30">
@@ -348,7 +372,7 @@ export default function AdminVideos() {
                     {videos.map((video) => (
                       <TableRow key={video.id}>
                         <TableCell>{video.title}</TableCell>
-                        <TableCell>{getCategoryName(video.categoryId)}</TableCell>
+                        <TableCell>{getCategoryName(video.category?.id)}</TableCell>
                         <TableCell>{video.views}</TableCell>
                         <TableCell>
                           <div className="flex gap-2">
