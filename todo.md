@@ -362,3 +362,8 @@
 - [x] 移除编辑时重复的 Video Type 选择器
 - [x] LOCAL 类型支持同时输入链接
 - [x] 非 LOCAL 类型使用 Textarea 显示更大的输入框
+
+## Bug修复 - 嵌入式代码处理
+- [x] 修改 VideoDetail.tsx，支持处理完整的 iframe 嵌入代码
+- [x] 支持 YouTube URL、视频 ID 和完整 iframe 代码三种格式
+- [x] 支持 Bilibili 的多种输入格式

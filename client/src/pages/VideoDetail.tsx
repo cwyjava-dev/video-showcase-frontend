@@ -42,18 +42,44 @@ export default function VideoDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 提取 YouTube 视频 ID
-  const extractYouTubeId = (url: string): string | null => {
-    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
+  // 提取 YouTube 视频 ID 或返回完整 iframe
+  const extractYouTubeId = (input: string): string | null => {
+    // 如果是完整的 iframe 代码，直接返回 null 以使用 iframe 渲染
+    if (input.includes('<iframe')) {
+      return null;
+    }
+    
+    // 提取 YouTube URL 中的视频 ID
+    const urlRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+    const urlMatch = input.match(urlRegex);
+    if (urlMatch) return urlMatch[1];
+    
+    // 如果是纯的视频 ID（没有 / 或 ? 的字符串），直接返回
+    if (!/[/?&=]/.test(input) && input.length > 0) {
+      return input;
+    }
+    
+    return null;
   };
 
-  // 提取 Bilibili 视频 ID
-  const extractBilibiliId = (url: string): string | null => {
-    const regex = /(?:bilibili\.com\/video\/)([^/?]+)|(?:b23\.tv\/)([^/?]+)/;
-    const match = url.match(regex);
-    return match ? (match[1] || match[2]) : null;
+  // 提取 Bilibili 视频 ID 或返回完整 iframe
+  const extractBilibiliId = (input: string): string | null => {
+    // 如果是完整的 iframe 代码，直接返回 null 以使用 iframe 渲染
+    if (input.includes('<iframe')) {
+      return null;
+    }
+    
+    // 提取 Bilibili URL 中的视频 ID
+    const urlRegex = /(?:bilibili\.com\/video\/)([^/?]+)|(?:b23\.tv\/)([^/?]+)/;
+    const urlMatch = input.match(urlRegex);
+    if (urlMatch) return urlMatch[1] || urlMatch[2];
+    
+    // 如果是纯的 BV ID（BV 开头），直接返回
+    if (input.startsWith('BV') || input.startsWith('bv')) {
+      return input;
+    }
+    
+    return null;
   };
 
   // 加载分类列表
@@ -164,25 +190,33 @@ export default function VideoDetail() {
                       </Button>
                     </div>
                   ) : video.videoType === "YOUTUBE" && video.videoUrl ? (
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src={`https://www.youtube.com/embed/${extractYouTubeId(video.videoUrl)}`}
-                      title={video.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
+                    video.videoUrl.includes('<iframe') ? (
+                      <div dangerouslySetInnerHTML={{ __html: video.videoUrl }} />
+                    ) : (
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://www.youtube.com/embed/${extractYouTubeId(video.videoUrl)}`}
+                        title={video.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    )
                   ) : video.videoType === "BILIBILI" && video.videoUrl ? (
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src={`https://player.bilibili.com/player.html?bvid=${extractBilibiliId(video.videoUrl)}`}
-                      title={video.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
+                    video.videoUrl.includes('<iframe') ? (
+                      <div dangerouslySetInnerHTML={{ __html: video.videoUrl }} />
+                    ) : (
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://player.bilibili.com/player.html?bvid=${extractBilibiliId(video.videoUrl)}`}
+                        title={video.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    )
                   ) : video.videoType === "LOCAL" && video.videoUrl ? (
                     <video
                       src={video.videoUrl}
