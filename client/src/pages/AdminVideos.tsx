@@ -85,33 +85,19 @@ export default function AdminVideos() {
       }
 
       if (editingId) {
-        const existingVideo = videos.find(v => v.id === editingId);
-        if (existingVideo) {
-          const categoryId = formData.categoryId ? parseInt(formData.categoryId) : null;
-          const selectedCategory = categoryId ? categories.find(c => c.id === categoryId) : null;
-          
-          const videoData = {
-            id: editingId,
-            title: formData.title,
-            description: formData.description,
-            videoUrl: existingVideo.videoUrl,
-            thumbnailUrl: formData.thumbnailUrl || existingVideo.thumbnailUrl || '',
-            category: selectedCategory ? {
-              id: selectedCategory.id,
-              name: selectedCategory.name,
-              description: '',
-              color: '',
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            } : null,
-            tags: [],
-            views: existingVideo.views,
-            status: 'PUBLISHED',
-            createdAt: existingVideo.createdAt,
-            updatedAt: new Date().toISOString(),
-          };
-          await apiService.updateVideo(editingId, videoData);
+        const categoryId = formData.categoryId ? parseInt(formData.categoryId) : null;
+        const selectedCategory = categoryId ? categories.find(c => c.id === categoryId) : null;
+        
+        const videoData: any = {
+          title: formData.title,
+          description: formData.description,
+        };
+        
+        if (selectedCategory) {
+          videoData.category = selectedCategory;
         }
+        
+        await apiService.updateVideo(editingId, videoData);
       } else {
         let videoUrl = formData.videoUrl;
         

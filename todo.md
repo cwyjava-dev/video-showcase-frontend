@@ -301,3 +301,8 @@
 ## Bug修复 - 前端 API 请求格式不匹配
 - [x] 修改前端 API 请求格式，发送完整的 Video 对象而不是简化格式
 - [x] 确保分类、标签等嵌套对象正确包含在请求中
+
+## Bug修复 - 前端发送不必要的字段
+- [x] 修改前端 AdminVideos，只发送用户实际修改的字段（title、description、categoryId）
+- [x] 不发送 createdAt、updatedAt、status、tags、id 等硬编码字段
+- [x] 确保与用户提交的表单数据相匹配
