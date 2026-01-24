@@ -309,3 +309,6 @@
 
 ## Bug修复 - category 应该只上传 id
 - [x] 修改前端 AdminVideos，修改视频时 category 只上传 id 而不是整个对象
+
+## Bug修复 - category 格式应该是 { id } 对象
+- [x] 修改前端 AdminVideos，发送 category: { id } 格式而不是 categoryId

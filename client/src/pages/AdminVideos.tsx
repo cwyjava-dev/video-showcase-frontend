@@ -93,7 +93,7 @@ export default function AdminVideos() {
         };
         
         if (categoryId) {
-          videoData.categoryId = categoryId;
+          videoData.category = { id: categoryId };
         }
         
         await apiService.updateVideo(editingId, videoData);
