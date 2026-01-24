@@ -17,6 +17,7 @@ interface Video {
   videoUrl: string;
   thumbnailUrl?: string;
   category?: Category;
+  status?: 'DRAFT' | 'PUBLISHED';
   views: number;
   createdAt: string;
 }
@@ -40,6 +41,7 @@ export default function AdminVideos() {
     videoUrl: '',
     thumbnailUrl: '',
     categoryId: '',
+    status: 'DRAFT' as 'DRAFT' | 'PUBLISHED',
     videoFile: null as File | null,
   });
 
@@ -68,10 +70,11 @@ export default function AdminVideos() {
       console.error('获取分类列表失败:', error);
     }
   };
+
   const getCategoryName = (categoryId?: number) => {
     if (!categoryId) return '-';
     const category = categories.find(c => c.id === categoryId);
-    return category ? category.name : '-';
+    return category?.name || '-';
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,6 +98,7 @@ export default function AdminVideos() {
         const videoData: any = {
           title: formData.title,
           description: formData.description,
+          status: formData.status,
         };
         
         if (categoryId) {
@@ -133,7 +137,7 @@ export default function AdminVideos() {
         });
       }
       
-      setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', videoFile: null });
+      setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoFile: null });
       setEditingId(null);
       setIsOpen(false);
       setUploadProgress(0);
@@ -152,6 +156,7 @@ export default function AdminVideos() {
       videoUrl: video.videoUrl,
       thumbnailUrl: video.thumbnailUrl || '',
       categoryId: video.category?.id?.toString() || '',
+      status: video.status || 'DRAFT',
       videoFile: null,
     });
     setEditingId(video.id);
@@ -174,7 +179,7 @@ export default function AdminVideos() {
   const handleCloseDialog = () => {
     setIsOpen(false);
     setEditingId(null);
-    setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', videoFile: null });
+    setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoFile: null });
     setUploadProgress(0);
   };
 
@@ -194,7 +199,7 @@ export default function AdminVideos() {
             </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button onClick={() => { setEditingId(null); setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', videoFile: null }); }}>
+                <Button onClick={() => { setEditingId(null); setFormData({ title: '', description: '', videoUrl: '', thumbnailUrl: '', categoryId: '', status: 'DRAFT', videoFile: null }); }}>
                   <Plus className="w-4 h-4 mr-2" />
                   {t('admin.newVideo')}
                 </Button>
@@ -326,6 +331,17 @@ export default function AdminVideos() {
                           {category.name}
                         </option>
                       ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Status</label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value as 'DRAFT' | 'PUBLISHED' })}
+                      className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                    >
+                      <option value="DRAFT">Draft</option>
+                      <option value="PUBLISHED">Published</option>
                     </select>
                   </div>
                   <div className="flex gap-2">
