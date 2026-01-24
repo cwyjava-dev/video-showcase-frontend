@@ -367,3 +367,8 @@
 - [x] 修改 VideoDetail.tsx，支持处理完整的 iframe 嵌入代码
 - [x] 支持 YouTube URL、视频 ID 和完整 iframe 代码三种格式
 - [x] 支持 Bilibili 的多种输入格式
+
+## 功能实现 - 安全和 UX 改进
+- [x] 添加 DOMPurify 库，为 dangerouslySetInnerHTML 实现 XSS 防护
+- [x] 为 iframe 添加响应式容器，确保宽高比自適应
+- [x] 在管理后台添加输入验证提示，提示用户支持的格式

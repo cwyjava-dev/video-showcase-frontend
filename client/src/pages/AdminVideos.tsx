@@ -264,13 +264,22 @@ export default function AdminVideos() {
                             className="mt-1"
                           />
                         ) : (
-                          <Textarea
-                            value={formData.videoUrl}
-                            onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                            placeholder={formData.videoType === 'YOUTUBE' ? 'YouTube URL or Video ID' : 'Bilibili URL or Video ID'}
-                            className="mt-1"
-                            rows={4}
-                          />
+                          <>
+                            <Textarea
+                              value={formData.videoUrl}
+                              onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                              placeholder={formData.videoType === 'YOUTUBE' ? 'YouTube URL or Video ID' : 'Bilibili URL or Video ID'}
+                              className="mt-1"
+                              rows={4}
+                            />
+                            <p className="text-xs text-muted-foreground mt-2">
+                              {formData.videoType === 'YOUTUBE' ? (
+                                <>Supported formats: https://www.youtube.com/watch?v=VIDEO_ID or VIDEO_ID or complete iframe code</>
+                              ) : (
+                                <>Supported formats: https://www.bilibili.com/video/BV... or BVID or complete iframe code</>
+                              )}
+                            </p>
+                          </>
                         )}
                         {formData.videoUrl && (
                           <p className="text-xs text-accent mt-1">
@@ -372,6 +381,13 @@ export default function AdminVideos() {
                               className="mt-1"
                               rows={4}
                             />
+                            <p className="text-xs text-muted-foreground mt-2">
+                              {formData.videoType === 'YOUTUBE' ? (
+                                <>Supported formats: https://www.youtube.com/watch?v=VIDEO_ID or VIDEO_ID or complete iframe code</>
+                              ) : (
+                                <>Supported formats: https://www.bilibili.com/video/BV... or BVID or complete iframe code</>
+                              )}
+                            </p>
                             {formData.videoUrl && (
                               <p className="text-xs text-accent mt-1">
                                 ✓ URL entered

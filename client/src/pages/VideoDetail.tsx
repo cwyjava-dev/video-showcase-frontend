@@ -7,6 +7,7 @@ import YouTubeHeader from "@/components/YouTubeHeader";
 import YouTubeSidebar from "@/components/YouTubeSidebar";
 import { apiService } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import DOMPurify from "dompurify";
 
 interface Video {
   id: number;
@@ -191,31 +192,49 @@ export default function VideoDetail() {
                     </div>
                   ) : video.videoType === "YOUTUBE" && video.videoUrl ? (
                     video.videoUrl.includes('<iframe') ? (
-                      <div dangerouslySetInnerHTML={{ __html: video.videoUrl }} />
+                      <div className="w-full h-full flex items-center justify-center" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl) }} />
                     ) : (
-                      <iframe
-                        width="100%"
-                        height="100%"
-                        src={`https://www.youtube.com/embed/${extractYouTubeId(video.videoUrl)}`}
-                        title={video.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
+                      <div className="w-full h-full flex items-center justify-center bg-black">
+                        <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
+                          <iframe
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%'
+                            }}
+                            src={`https://www.youtube.com/embed/${extractYouTubeId(video.videoUrl)}`}
+                            title={video.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                      </div>
                     )
                   ) : video.videoType === "BILIBILI" && video.videoUrl ? (
                     video.videoUrl.includes('<iframe') ? (
-                      <div dangerouslySetInnerHTML={{ __html: video.videoUrl }} />
+                      <div className="w-full h-full flex items-center justify-center" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl) }} />
                     ) : (
-                      <iframe
-                        width="100%"
-                        height="100%"
-                        src={`https://player.bilibili.com/player.html?bvid=${extractBilibiliId(video.videoUrl)}`}
-                        title={video.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
+                      <div className="w-full h-full flex items-center justify-center bg-black">
+                        <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
+                          <iframe
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%'
+                            }}
+                            src={`https://player.bilibili.com/player.html?bvid=${extractBilibiliId(video.videoUrl)}`}
+                            title={video.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                      </div>
                     )
                   ) : video.videoType === "LOCAL" && video.videoUrl ? (
                     <video
