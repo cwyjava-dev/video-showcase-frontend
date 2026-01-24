@@ -389,3 +389,6 @@
 ## Bug修复 - 管理页面编辑问题
 - [x] 修复编辑表单中重复的 Video Type 选择器
 - [x] 修复嵌入式 HTML 修改不起作用的问题
+
+## Bug修复 - YouTube/Bilibili 嵌入式 HTML 修改不保存
+- [x] 修复编辑 YouTube/Bilibili 视频时，嵌入式 HTML 修改不保存的问题
