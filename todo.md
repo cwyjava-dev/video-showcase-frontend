@@ -297,3 +297,7 @@
 - [x] 修改 VideoController 的 updateVideo 和 createVideo 方法
 - [x] 修改 VideoService 的相关方法
 - [x] 测试修复效果
+
+## Bug修复 - 前端 API 请求格式不匹配
+- [x] 修改前端 API 请求格式，发送完整的 Video 对象而不是简化格式
+- [x] 确保分类、标签等嵌套对象正确包含在请求中

@@ -216,12 +216,7 @@ class ApiService {
    */
   async updateVideo(
     id: number,
-    data: {
-      title?: string;
-      description?: string;
-      categoryId?: number;
-      tags?: number[];
-    }
+    data: any
   ) {
     const response = await this.api.put(`/videos/${id}`, data);
     return response.data;
