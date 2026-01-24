@@ -179,7 +179,7 @@ export default function VideoDetail() {
               {/* Main video section */}
               <div className="lg:col-span-2 space-y-4">
                 {/* Video player */}
-                <div className="w-full bg-black rounded-lg overflow-hidden flex items-center justify-center" style={{ minHeight: '500px', height: 'auto' }}>
+                <div className="w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: 'auto' }}>
                   {!user ? (
                     <div className="text-center space-y-4">
                       <p className="text-foreground text-lg">请登录后观看视频</p>
