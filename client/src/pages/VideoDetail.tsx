@@ -192,57 +192,35 @@ export default function VideoDetail() {
                     </div>
                   ) : video.videoType === "YOUTUBE" && video.videoUrl ? (
                     video.videoUrl.includes('<iframe') ? (
-                      <div className="w-full h-full flex items-center justify-center bg-black" style={{ minHeight: '100%' }}>
-                        <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl, { ALLOWED_TAGS: ['iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'title'] }) }} />
-                        </div>
-                      </div>
+                      <div className="w-full h-full flex items-center justify-center bg-black" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl, { ALLOWED_TAGS: ['iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'title', 'style'] }) }} />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-black">
-                        <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
-                          <iframe
-                            style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: '100%'
-                            }}
-                            src={`https://www.youtube.com/embed/${extractYouTubeId(video.videoUrl)}`}
-                            title={video.title}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
-                        </div>
-                      </div>
+                      <iframe
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          border: 'none'
+                        }}
+                        src={`https://www.youtube.com/embed/${extractYouTubeId(video.videoUrl)}`}
+                        title={video.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
                     )
                   ) : video.videoType === "BILIBILI" && video.videoUrl ? (
                     video.videoUrl.includes('<iframe') ? (
-                      <div className="w-full h-full flex items-center justify-center bg-black" style={{ minHeight: '100%' }}>
-                        <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl, { ALLOWED_TAGS: ['iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'title'] }) }} />
-                        </div>
-                      </div>
+                      <div className="w-full h-full flex items-center justify-center bg-black" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(video.videoUrl, { ALLOWED_TAGS: ['iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'title', 'style'] }) }} />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-black">
-                        <div className="w-full" style={{ paddingBottom: '56.25%', position: 'relative' }}>
-                          <iframe
-                            style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: '100%'
-                            }}
-                            src={`https://player.bilibili.com/player.html?bvid=${extractBilibiliId(video.videoUrl)}`}
-                            title={video.title}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
-                        </div>
-                      </div>
+                      <iframe
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          border: 'none'
+                        }}
+                        src={`https://player.bilibili.com/player.html?bvid=${extractBilibiliId(video.videoUrl)}`}
+                        title={video.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
                     )
                   ) : video.videoType === "LOCAL" && video.videoUrl ? (
                     <video
