@@ -328,3 +328,7 @@
 
 ## UI改进 - 视频列表显示状态
 - [x] 在视频表格中添加状态列，显示 DRAFT/PUBLISHED
+
+## Bug修复 - 后端只返回已发布视频
+- [x] 修改后端 VideoService，使其只返回 PUBLISHED 状态的视频
+- [x] 修改后端 VideoController 的所有查询接口
