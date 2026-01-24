@@ -336,3 +336,7 @@
 ## Bug修复 - 管理接口应该显示所有视频
 - [x] 为管理接口添加专用的视频查询端点 /api/videos/admin/all
 - [x] 修改前端管理页面，调用管理专用接口获取所有视频
+
+## Bug修复 - 后端按分类过滤视频
+- [x] 修复 GET /api/videos?categoryId=X 接口，正确返回指定分类的视频
+- [x] 修复 GET /api/videos/admin/all?categoryId=X 接口，正确返回指定分类的所有视频
