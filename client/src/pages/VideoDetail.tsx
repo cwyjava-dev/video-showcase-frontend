@@ -173,13 +173,13 @@ export default function VideoDetail() {
           categories={categories}
         />
 
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <main className="flex-1 overflow-y-auto w-full">
+          <div className="w-full h-full p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
               {/* Main video section */}
               <div className="lg:col-span-2 space-y-4">
                 {/* Video player */}
-                <div className="w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: 'auto' }}>
+                <div className="w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
                   {!user ? (
                     <div className="text-center space-y-4">
                       <p className="text-foreground text-lg">请登录后观看视频</p>
